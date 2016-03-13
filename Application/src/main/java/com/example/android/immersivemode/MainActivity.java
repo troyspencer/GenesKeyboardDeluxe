@@ -17,19 +17,29 @@
 
 package com.example.android.immersivemode;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.text.InputType;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.android.common.activities.SampleActivityBase;
 import com.example.android.common.logger.Log;
 import com.example.android.common.logger.LogFragment;
 import com.example.android.common.logger.LogWrapper;
 import com.example.android.common.logger.MessageOnlyLogFilter;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple launcher activity containing a summary sample description
@@ -46,49 +56,27 @@ public class MainActivity extends SampleActivityBase {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button11 = (Button) findViewById(R.id.button11);
-        Button button12 = (Button) findViewById(R.id.button12);
-        Button button13 = (Button) findViewById(R.id.button13);
-        Button button14 = (Button) findViewById(R.id.button14);
-        Button button15 = (Button) findViewById(R.id.button15);
-        Button button21 = (Button) findViewById(R.id.button21);
-        Button button22 = (Button) findViewById(R.id.button22);
-        Button button23 = (Button) findViewById(R.id.button23);
-        Button button24 = (Button) findViewById(R.id.button24);
-        Button button25 = (Button) findViewById(R.id.button25);
+        Button assignSample = (Button) findViewById(R.id.assign);
+        Button savePreset = (Button) findViewById(R.id.save);
 
-        button11.getBackground().setColorFilter(new LightingColorFilter(0xFFFEF432, 0xFFFEF432));
-        button12.getBackground().setColorFilter(new LightingColorFilter(0xFFFEF432, 0xFFFEF432));
-        button13.getBackground().setColorFilter(new LightingColorFilter(0xFFFEF432, 0xFFFEF432));
-        button14.getBackground().setColorFilter(new LightingColorFilter(0xFFFEF432, 0xFFFEF432));
-        button15.getBackground().setColorFilter(new LightingColorFilter(0xFFFEF432, 0xFFFEF432));
-        button21.getBackground().setColorFilter(new LightingColorFilter(0xFFFEF432, 0xFFFEF432));
-        button22.getBackground().setColorFilter(new LightingColorFilter(0xFFFEF432, 0xFFFEF432));
-        button23.getBackground().setColorFilter(new LightingColorFilter(0xFFFEF432, 0xFFFEF432));
-        button24.getBackground().setColorFilter(new LightingColorFilter(0xFFFEF432, 0xFFFEF432));
-        button25.getBackground().setColorFilter(new LightingColorFilter(0xFFFEF432, 0xFFFEF432));
+        savePreset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-        Button key1 = (Button) findViewById(R.id.key1);
-        Button key2 = (Button) findViewById(R.id.key2);
-        Button key3 = (Button) findViewById(R.id.key3);
-        Button key4 = (Button) findViewById(R.id.key4);
-        Button key5 = (Button) findViewById(R.id.key5);
-        Button key6 = (Button) findViewById(R.id.key6);
-        Button key7 = (Button) findViewById(R.id.key7);
-        Button key8 = (Button) findViewById(R.id.key8);
-        Button key9 = (Button) findViewById(R.id.key9);
-        Button key10 = (Button) findViewById(R.id.key10);
+                savePreset();
+            }
+        });
 
-        key1.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFFFFFFF));
-        key2.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFFFFFFF));
-        key3.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFFFFFFF));
-        key4.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFFFFFFF));
-        key5.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFFFFFFF));
-        key6.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFFFFFFF));
-        key7.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFFFFFFF));
-        key8.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFFFFFFF));
-        key9.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFFFFFFF));
-        key10.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFFFFFFF));
+
+        assignSample.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                highLightSamples();
+
+                selectSample();
+            }
+        });
 
 
         if (getSupportFragmentManager().findFragmentByTag(FRAGTAG) == null ) {
@@ -126,5 +114,185 @@ public class MainActivity extends SampleActivityBase {
 
 
         Log.i(TAG, "Ready");
+    }
+
+    private void highLightSamples(){
+
+        Button button11 = (Button) findViewById(R.id.button11);
+        Button button12 = (Button) findViewById(R.id.button12);
+        Button button13 = (Button) findViewById(R.id.button13);
+        Button button14 = (Button) findViewById(R.id.button14);
+        Button button15 = (Button) findViewById(R.id.button15);
+        Button button21 = (Button) findViewById(R.id.button21);
+        Button button22 = (Button) findViewById(R.id.button22);
+        Button button23 = (Button) findViewById(R.id.button23);
+        Button button24 = (Button) findViewById(R.id.button24);
+        Button button25 = (Button) findViewById(R.id.button25);
+
+        button11.setBackgroundResource(R.drawable.highlighted_sample_button);
+        button12.setBackgroundResource(R.drawable.highlighted_sample_button);
+        button13.setBackgroundResource(R.drawable.highlighted_sample_button);
+        button14.setBackgroundResource(R.drawable.highlighted_sample_button);
+        button15.setBackgroundResource(R.drawable.highlighted_sample_button);
+        button21.setBackgroundResource(R.drawable.highlighted_sample_button);
+        button22.setBackgroundResource(R.drawable.highlighted_sample_button);
+        button23.setBackgroundResource(R.drawable.highlighted_sample_button);
+        button24.setBackgroundResource(R.drawable.highlighted_sample_button);
+        button25.setBackgroundResource(R.drawable.highlighted_sample_button);
+    }
+
+    private void unhighLightSamples(){
+
+        Button button11 = (Button) findViewById(R.id.button11);
+        Button button12 = (Button) findViewById(R.id.button12);
+        Button button13 = (Button) findViewById(R.id.button13);
+        Button button14 = (Button) findViewById(R.id.button14);
+        Button button15 = (Button) findViewById(R.id.button15);
+        Button button21 = (Button) findViewById(R.id.button21);
+        Button button22 = (Button) findViewById(R.id.button22);
+        Button button23 = (Button) findViewById(R.id.button23);
+        Button button24 = (Button) findViewById(R.id.button24);
+        Button button25 = (Button) findViewById(R.id.button25);
+
+        button11.setBackgroundResource(R.drawable.samplebutton);
+        button12.setBackgroundResource(R.drawable.samplebutton);
+        button13.setBackgroundResource(R.drawable.samplebutton);
+        button14.setBackgroundResource(R.drawable.samplebutton);
+        button15.setBackgroundResource(R.drawable.samplebutton);
+        button21.setBackgroundResource(R.drawable.samplebutton);
+        button22.setBackgroundResource(R.drawable.samplebutton);
+        button23.setBackgroundResource(R.drawable.samplebutton);
+        button24.setBackgroundResource(R.drawable.samplebutton);
+        button25.setBackgroundResource(R.drawable.samplebutton);
+
+    }
+
+    private void selectSample(){
+
+        Button button11 = (Button) findViewById(R.id.button11);
+        Button button12 = (Button) findViewById(R.id.button12);
+        Button button13 = (Button) findViewById(R.id.button13);
+        Button button14 = (Button) findViewById(R.id.button14);
+        Button button15 = (Button) findViewById(R.id.button15);
+        Button button21 = (Button) findViewById(R.id.button21);
+        Button button22 = (Button) findViewById(R.id.button22);
+        Button button23 = (Button) findViewById(R.id.button23);
+        Button button24 = (Button) findViewById(R.id.button24);
+        Button button25 = (Button) findViewById(R.id.button25);
+
+        button11.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                unhighLightSamples();
+
+            }
+        });
+
+        button12.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                unhighLightSamples();
+
+            }
+        });
+        button13.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                unhighLightSamples();
+
+            }
+        });
+        button14.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                unhighLightSamples();
+
+            }
+        });
+        button15.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                unhighLightSamples();
+
+            }
+        });
+        button21.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                unhighLightSamples();
+
+            }
+        });
+        button22.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                unhighLightSamples();
+
+            }
+        });
+        button23.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                unhighLightSamples();
+
+            }
+        });
+        button24.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                unhighLightSamples();
+
+            }
+        });
+        button25.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                unhighLightSamples();
+
+            }
+        });
+    }
+
+    private void savePreset(){
+
+        // Set up the input
+        final EditText input = new EditText(this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+
+
+        new AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setView(input)
+                .setTitle("Save preset as...")
+                .setMessage("")
+
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        input.getText().toString();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+
+
+
     }
 }
