@@ -91,6 +91,7 @@ public class MainActivity extends SampleActivityBase {
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -302,6 +303,12 @@ public class MainActivity extends SampleActivityBase {
                     public void onClick(DialogInterface dialog, int which) {
 
                         input.getText().toString();
+                        if (getSupportFragmentManager().findFragmentByTag(FRAGTAG) == null ) {
+                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                            ImmersiveModeFragment fragment = new ImmersiveModeFragment();
+                            transaction.add(fragment, FRAGTAG);
+                            transaction.commit();
+                        }
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -319,6 +326,9 @@ public class MainActivity extends SampleActivityBase {
     private void sampleDialog(Button button){
 
         final Button chosenSample = button;
+
+
+
         new AlertDialog.Builder(this)
                 .setCancelable(true)
                 .setTitle("Select a sample to assign")
@@ -329,6 +339,13 @@ public class MainActivity extends SampleActivityBase {
                     public void onClick(DialogInterface dialog, int which) {
 
                         chosenSample.setText("chosen sample");
+                        if (getSupportFragmentManager().findFragmentByTag(FRAGTAG) == null ) {
+                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                            ImmersiveModeFragment fragment = new ImmersiveModeFragment();
+                            transaction.add(fragment, FRAGTAG);
+                            transaction.commit();
+                        }
+
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -432,4 +449,6 @@ public class MainActivity extends SampleActivityBase {
         });
 
     }
+
+
 }
