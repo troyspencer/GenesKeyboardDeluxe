@@ -26,18 +26,7 @@
     <dimen name="vertical_page_margin">@dimen/margin_medium</dimen>
     <!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/base-strings.xml -->
     <eat-comment/>
-    <string name="app_name">ImmersiveMode</string>
-    <string name="intro_message">
-        <![CDATA[
-        
-            
-            One of the features introduced in KitKat is "immersive mode". Immersive mode gives the
-            user the ability to show/hide the status bar and navigation bar with a swipe.  To try,
-            click the "Toggle immersive mode" button, then try swiping the bar in and out!
-            
-        
-        ]]>
-    </string>
+    <string name="app_name">Gene\'s Keyboard Deluxe</string>
     <!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="sample_action">Toggle immersive mode!</string>

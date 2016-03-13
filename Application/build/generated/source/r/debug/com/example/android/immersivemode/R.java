@@ -268,13 +268,27 @@ containing a value of this type.
         public static final int vertical_page_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
-        public static final int keyboard=0x7f020001;
-        public static final int tile=0x7f020002;
+        public static final int blackkey=0x7f020000;
+        public static final int highlighted_sample_button=0x7f020001;
+        public static final int ic_launcher=0x7f020002;
+        public static final int key=0x7f020003;
+        public static final int keyboard=0x7f020004;
+        public static final int recordbutton=0x7f020005;
+        public static final int samplebutton=0x7f020006;
+        public static final int settingsbutton=0x7f020007;
+        public static final int tile=0x7f020008;
     }
     public static final class id {
         public static final int alignBounds=0x7f090002;
         public static final int alignMargins=0x7f090003;
+        public static final int assign=0x7f09001f;
+        public static final int blackkey1=0x7f09002f;
+        public static final int blackkey2=0x7f090030;
+        public static final int blackkey3=0x7f090031;
+        public static final int blackkey4=0x7f090032;
+        public static final int blackkey5=0x7f090033;
+        public static final int blackkey6=0x7f090034;
+        public static final int blackkey7=0x7f090035;
         public static final int bottom=0x7f090004;
         public static final int button11=0x7f090014;
         public static final int button12=0x7f090015;
@@ -291,29 +305,33 @@ containing a value of this type.
         public static final int center_vertical=0x7f090007;
         public static final int clip_horizontal=0x7f090008;
         public static final int clip_vertical=0x7f090009;
+        public static final int edit=0x7f090020;
         public static final int end=0x7f09000a;
         public static final int fill=0x7f09000b;
         public static final int fill_horizontal=0x7f09000c;
         public static final int fill_vertical=0x7f09000d;
         public static final int horizontal=0x7f090000;
-        public static final int imageView=0x7f090028;
-        public static final int key1=0x7f09001e;
-        public static final int key10=0x7f090027;
-        public static final int key2=0x7f09001f;
-        public static final int key3=0x7f090020;
-        public static final int key4=0x7f090021;
-        public static final int key5=0x7f090022;
-        public static final int key6=0x7f090023;
-        public static final int key7=0x7f090024;
-        public static final int key8=0x7f090025;
-        public static final int key9=0x7f090026;
+        public static final int imageView=0x7f090024;
+        public static final int key1=0x7f090025;
+        public static final int key10=0x7f09002e;
+        public static final int key2=0x7f090026;
+        public static final int key3=0x7f090027;
+        public static final int key4=0x7f090028;
+        public static final int key5=0x7f090029;
+        public static final int key6=0x7f09002a;
+        public static final int key7=0x7f09002b;
+        public static final int key8=0x7f09002c;
+        public static final int key9=0x7f09002d;
         public static final int left=0x7f09000e;
-        public static final int log_fragment=0x7f090029;
+        public static final int load=0x7f090022;
+        public static final int log_fragment=0x7f090036;
         public static final int myGrid=0x7f090013;
+        public static final int recordButton=0x7f090023;
         public static final int right=0x7f09000f;
-        public static final int sample_action=0x7f09002b;
+        public static final int sample_action=0x7f090037;
         public static final int sample_main_layout=0x7f090012;
-        public static final int sample_output=0x7f09002a;
+        public static final int save=0x7f090021;
+        public static final int settlings=0x7f09001e;
         public static final int start=0x7f090010;
         public static final int top=0x7f090011;
         public static final int vertical=0x7f090001;
@@ -326,8 +344,7 @@ containing a value of this type.
     }
     public static final class string {
         public static final int app_name=0x7f070000;
-        public static final int intro_message=0x7f070001;
-        public static final int sample_action=0x7f070002;
+        public static final int sample_action=0x7f070001;
     }
     public static final class style {
         public static final int AppTheme=0x7f050003;
