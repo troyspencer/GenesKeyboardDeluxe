@@ -42,7 +42,8 @@
                     android:rowCount="2"
                     android:useDefaultMargins="true"
                     android:id="@+id/myGrid"
-                    android:layout_gravity="left">
+                    android:layout_gravity="left"
+                    android:alignmentMode="alignMargins">
 
 
                     <Button

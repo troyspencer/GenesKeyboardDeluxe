@@ -18,6 +18,7 @@
 package com.example.android.immersivemode;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -31,6 +32,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.android.common.activities.SampleActivityBase;
 import com.example.android.common.logger.Log;
@@ -58,6 +60,8 @@ public class MainActivity extends SampleActivityBase {
 
         Button assignSample = (Button) findViewById(R.id.assign);
         Button savePreset = (Button) findViewById(R.id.save);
+
+        samplePlayMode();
 
         savePreset.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,23 +173,24 @@ public class MainActivity extends SampleActivityBase {
 
     private void selectSample(){
 
-        Button button11 = (Button) findViewById(R.id.button11);
-        Button button12 = (Button) findViewById(R.id.button12);
-        Button button13 = (Button) findViewById(R.id.button13);
-        Button button14 = (Button) findViewById(R.id.button14);
-        Button button15 = (Button) findViewById(R.id.button15);
-        Button button21 = (Button) findViewById(R.id.button21);
-        Button button22 = (Button) findViewById(R.id.button22);
-        Button button23 = (Button) findViewById(R.id.button23);
-        Button button24 = (Button) findViewById(R.id.button24);
-        Button button25 = (Button) findViewById(R.id.button25);
+        final Button button11 = (Button) findViewById(R.id.button11);
+        final Button button12 = (Button) findViewById(R.id.button12);
+        final Button button13 = (Button) findViewById(R.id.button13);
+        final Button button14 = (Button) findViewById(R.id.button14);
+        final Button button15 = (Button) findViewById(R.id.button15);
+        final Button button21 = (Button) findViewById(R.id.button21);
+        final Button button22 = (Button) findViewById(R.id.button22);
+        final Button button23 = (Button) findViewById(R.id.button23);
+        final Button button24 = (Button) findViewById(R.id.button24);
+        final Button button25 = (Button) findViewById(R.id.button25);
 
         button11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 unhighLightSamples();
-
+                sampleDialog(button11);
+                samplePlayMode();
             }
         });
 
@@ -194,7 +199,8 @@ public class MainActivity extends SampleActivityBase {
             public void onClick(View view) {
 
                 unhighLightSamples();
-
+                sampleDialog(button12);
+                samplePlayMode();
             }
         });
         button13.setOnClickListener(new View.OnClickListener() {
@@ -202,7 +208,8 @@ public class MainActivity extends SampleActivityBase {
             public void onClick(View view) {
 
                 unhighLightSamples();
-
+                sampleDialog(button13);
+                samplePlayMode();
             }
         });
         button14.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +217,8 @@ public class MainActivity extends SampleActivityBase {
             public void onClick(View view) {
 
                 unhighLightSamples();
-
+                sampleDialog(button14);
+                samplePlayMode();
             }
         });
         button15.setOnClickListener(new View.OnClickListener() {
@@ -218,6 +226,8 @@ public class MainActivity extends SampleActivityBase {
             public void onClick(View view) {
 
                 unhighLightSamples();
+                sampleDialog(button15);
+                samplePlayMode();
 
             }
         });
@@ -226,6 +236,8 @@ public class MainActivity extends SampleActivityBase {
             public void onClick(View view) {
 
                 unhighLightSamples();
+                sampleDialog(button21);
+                samplePlayMode();
 
             }
         });
@@ -234,6 +246,8 @@ public class MainActivity extends SampleActivityBase {
             public void onClick(View view) {
 
                 unhighLightSamples();
+                sampleDialog(button22);
+                samplePlayMode();
 
             }
         });
@@ -242,6 +256,8 @@ public class MainActivity extends SampleActivityBase {
             public void onClick(View view) {
 
                 unhighLightSamples();
+                sampleDialog(button23);
+                samplePlayMode();
 
             }
         });
@@ -250,6 +266,8 @@ public class MainActivity extends SampleActivityBase {
             public void onClick(View view) {
 
                 unhighLightSamples();
+                sampleDialog(button24);
+                samplePlayMode();
 
             }
         });
@@ -258,6 +276,8 @@ public class MainActivity extends SampleActivityBase {
             public void onClick(View view) {
 
                 unhighLightSamples();
+                sampleDialog(button25);
+                samplePlayMode();
 
             }
         });
@@ -293,6 +313,123 @@ public class MainActivity extends SampleActivityBase {
                 .show();
 
 
+
+    }
+
+    private void sampleDialog(Button button){
+
+        final Button chosenSample = button;
+        new AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setTitle("Select a sample to assign")
+                .setMessage("")
+
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        chosenSample.setText("chosen sample");
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
+
+    private void samplePlayMode(){
+        final Button button11 = (Button) findViewById(R.id.button11);
+        final Button button12 = (Button) findViewById(R.id.button12);
+        final Button button13 = (Button) findViewById(R.id.button13);
+        final Button button14 = (Button) findViewById(R.id.button14);
+        final Button button15 = (Button) findViewById(R.id.button15);
+        final Button button21 = (Button) findViewById(R.id.button21);
+        final Button button22 = (Button) findViewById(R.id.button22);
+        final Button button23 = (Button) findViewById(R.id.button23);
+        final Button button24 = (Button) findViewById(R.id.button24);
+        final Button button25 = (Button) findViewById(R.id.button25);
+
+        final Context context = getApplicationContext();
+        button11.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, button11.getText().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        button12.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(context, button12.getText().toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        button13.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(context, button13.getText().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        button14.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(context, button14.getText().toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        button15.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(context, button15.getText().toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        button21.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(context, button21.getText().toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        button22.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                Toast.makeText(context, button22.getText().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        button23.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(context, button23.getText().toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        button24.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(context, button24.getText().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        button25.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(context, button25.getText().toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
     }
 }
