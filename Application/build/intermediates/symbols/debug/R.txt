@@ -47,6 +47,7 @@ int drawable recordbutton 0x7f020005
 int drawable samplebutton 0x7f020006
 int drawable settingsbutton 0x7f020007
 int drawable tile 0x7f020008
+int id acceptButton 0x7f09003b
 int id alignBounds 0x7f090002
 int id alignMargins 0x7f090003
 int id assign 0x7f09001f
@@ -68,6 +69,7 @@ int id button22 0x7f09001a
 int id button23 0x7f09001b
 int id button24 0x7f09001c
 int id button25 0x7f09001d
+int id cancelButton 0x7f090038
 int id center 0x7f090005
 int id center_horizontal 0x7f090006
 int id center_vertical 0x7f090007
@@ -79,6 +81,7 @@ int id fill 0x7f09000b
 int id fill_horizontal 0x7f09000c
 int id fill_vertical 0x7f09000d
 int id horizontal 0x7f090000
+int id image 0x7f090037
 int id imageView 0x7f090024
 int id key1 0x7f090025
 int id key10 0x7f09002e
@@ -94,9 +97,11 @@ int id left 0x7f09000e
 int id load 0x7f090022
 int id log_fragment 0x7f090036
 int id myGrid 0x7f090013
+int id presetName 0x7f09003a
 int id recordButton 0x7f090023
 int id right 0x7f09000f
-int id sample_action 0x7f090037
+int id sampleList 0x7f090039
+int id sample_action 0x7f09003c
 int id sample_main_layout 0x7f090012
 int id save 0x7f090021
 int id settlings 0x7f09001e
@@ -104,6 +109,9 @@ int id start 0x7f090010
 int id top 0x7f090011
 int id vertical 0x7f090001
 int layout activity_main 0x7f030000
+int layout choose_sample_dialog 0x7f030001
+int layout record_sample_dialog 0x7f030002
+int layout save_preset_dialog 0x7f030003
 int menu main 0x7f080000
 int string app_name 0x7f070000
 int string sample_action 0x7f070001
