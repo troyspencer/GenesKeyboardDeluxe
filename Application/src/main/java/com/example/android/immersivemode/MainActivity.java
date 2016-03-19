@@ -77,14 +77,25 @@ public class MainActivity extends SampleActivityBase {
         Button savePreset = (Button) findViewById(R.id.save);
         Button recordSample = (Button) findViewById(R.id.recordButton);
         Button editSample = (Button) findViewById(R.id.edit);
+        Button loadPreset = (Button) findViewById(R.id.load);
 
         samplePlayMode();
+
+        loadPreset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                loadPreset();
+
+            }
+        });
 
         savePreset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 savePreset();
+
             }
         });
 
@@ -281,6 +292,54 @@ public class MainActivity extends SampleActivityBase {
         });
     }
 
+    private void loadPreset(){
+
+            //TODO add getPresetMap, savePresetMap
+            ArrayAdapter<String> adapter;
+            Activity context = MainActivity.this;
+            // custom dialog
+            final Dialog dialog = new Dialog(context);
+            dialog.setContentView(R.layout.choose_sample_dialog);
+            dialog.setTitle("Choose a sample...");
+
+            // set the custom dialog components - text, image and button
+            //TextView text = (TextView) dialog.findViewById(R.id.text);
+            //text.setText("Android custom dialog example!");
+            ImageView image = (ImageView) dialog.findViewById(R.id.image);
+            final ListView sampleListView = (ListView) dialog.findViewById(R.id.sampleList);
+
+            final List<String> sampleList = getSampleList();
+            if(sampleList != null){
+                // Defined Array values to show in ListView
+                String[] values = new String[sampleList.size()];
+
+                for(int i = 0; i < sampleList.size(); i++ ){
+                    values[i] =  sampleList.get(i);
+                }
+
+                adapter = new ArrayAdapter<String>(this,
+                        android.R.layout.simple_list_item_1, android.R.id.text1, values);
+
+                // Assign adapter to ListView
+                sampleListView.setAdapter(adapter);
+
+                // ListView Item Click Listener
+                sampleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+
+
+                        // ListView Clicked item value
+
+                        dialog.dismiss();
+
+                    }
+
+                });
+            }
+    }
     private void savePreset(){
 
         Activity context = MainActivity.this;
@@ -308,8 +367,9 @@ public class MainActivity extends SampleActivityBase {
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presetName.getText().toString();
+                //presetName.getText().toString();
                 dialog.dismiss();
+
             }
         });
 
@@ -441,13 +501,10 @@ public class MainActivity extends SampleActivityBase {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
 
-                    // ListView Clicked item index
-                    int itemPosition = position;
 
                     // ListView Clicked item value
                     chosenSample.setText(sampleList.get(position));
                     dialog.dismiss();
-                    //Toast.makeText(eventChosen, Toast.LENGTH_LONG);
 
                 }
 
