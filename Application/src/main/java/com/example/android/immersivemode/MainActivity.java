@@ -302,6 +302,24 @@ public class MainActivity extends SampleActivityBase {
             dialog.setContentView(R.layout.choose_sample_dialog);
             dialog.setTitle("Choose a sample...");
 
+        //Here's the magic..
+        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+        //Set the dialog to immersive
+        dialog.getWindow().getDecorView().setSystemUiVisibility(
+                context.getWindow().getDecorView().getSystemUiVisibility());
+
+        //Show the dialog! (Hopefully no soft navigation...)
+        dialog.show();
+
+        //Clear the not focusable flag from the window
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
+
             // set the custom dialog components - text, image and button
             //TextView text = (TextView) dialog.findViewById(R.id.text);
             //text.setText("Android custom dialog example!");
