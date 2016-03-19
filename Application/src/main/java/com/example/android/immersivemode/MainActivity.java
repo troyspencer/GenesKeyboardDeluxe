@@ -17,7 +17,10 @@
 
 package com.example.android.immersivemode;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -27,11 +30,20 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
 import android.text.InputType;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.common.activities.SampleActivityBase;
@@ -40,6 +52,12 @@ import com.example.android.common.logger.LogFragment;
 import com.example.android.common.logger.LogWrapper;
 import com.example.android.common.logger.MessageOnlyLogFilter;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,9 +67,6 @@ import java.util.Map;
  */
 public class MainActivity extends SampleActivityBase {
 
-    public static final String TAG = "MainActivity";
-
-    public static final String FRAGTAG = "ImmersiveModeFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +75,8 @@ public class MainActivity extends SampleActivityBase {
 
         Button assignSample = (Button) findViewById(R.id.assign);
         Button savePreset = (Button) findViewById(R.id.save);
+        Button recordSample = (Button) findViewById(R.id.recordButton);
+        Button editSample = (Button) findViewById(R.id.edit);
 
         samplePlayMode();
 
@@ -82,44 +99,24 @@ public class MainActivity extends SampleActivityBase {
             }
         });
 
+        recordSample.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveSampleName();
+            }
+        });
 
-        if (getSupportFragmentManager().findFragmentByTag(FRAGTAG) == null ) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            ImmersiveModeFragment fragment = new ImmersiveModeFragment();
-            transaction.add(fragment, FRAGTAG);
-            transaction.commit();
-        }
+        editSample.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewSampleList();
+            }
+        });
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    /** Create a chain of targets that will receive log data */
-    @Override
-    public void initializeLogging() {
-        // Wraps Android's native log framework.
-        LogWrapper logWrapper = new LogWrapper();
-        // Using Log, front-end to the logging chain, emulates android.util.log method signatures.
-        Log.setLogNode(logWrapper);
-
-        // Filter strips out everything except the message text.
-        MessageOnlyLogFilter msgFilter = new MessageOnlyLogFilter();
-        logWrapper.setNext(msgFilter);
-
-        // On screen logging via a fragment with a TextView.
-        LogFragment logFragment = (LogFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.log_fragment);
-        msgFilter.setNext(logFragment.getLogView());
-        logFragment.getLogView().setTextAppearance(this, R.style.Log);
-        logFragment.getLogView().setBackgroundColor(Color.WHITE);
 
 
-        Log.i(TAG, "Ready");
-    }
 
     private void highLightSamples(){
 
@@ -286,77 +283,325 @@ public class MainActivity extends SampleActivityBase {
 
     private void savePreset(){
 
-        // Set up the input
-        final EditText input = new EditText(this);
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        Activity context = MainActivity.this;
+        // custom dialog
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.save_preset_dialog);
+        dialog.setTitle("Save Preset As...");
+
+        // set the custom dialog components - text, image and button
+        //TextView text = (TextView) dialog.findViewById(R.id.text);
+        //text.setText("Android custom dialog example!");
+        ImageView image = (ImageView) dialog.findViewById(R.id.image);
+
+        final EditText presetName = (EditText) dialog.findViewById(R.id.presetName);
 
 
-        new AlertDialog.Builder(this)
-                .setCancelable(true)
-                .setView(input)
-                .setTitle("Save preset as...")
-                .setMessage("")
+        //
+        //
+        // image.setImageResource(R.drawable.ic_launcher);
 
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        Button acceptButton = (Button) dialog.findViewById(R.id.acceptButton);
+        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
 
-                        input.getText().toString();
-                        if (getSupportFragmentManager().findFragmentByTag(FRAGTAG) == null ) {
-                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                            ImmersiveModeFragment fragment = new ImmersiveModeFragment();
-                            transaction.add(fragment, FRAGTAG);
-                            transaction.commit();
-                        }
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        // if button is clicked, close the custom dialog
+        acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presetName.getText().toString();
+                dialog.dismiss();
+            }
+        });
 
-                    }
-                })
-                .show();
+        // if button is clicked, close the custom dialog
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
 
 
+        //Here's the magic..
+        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+        //Set the dialog to immersive
+        dialog.getWindow().getDecorView().setSystemUiVisibility(
+                context.getWindow().getDecorView().getSystemUiVisibility());
+
+        //Show the dialog! (Hopefully no soft navigation...)
+        dialog.show();
+
+        //Clear the not focusable flag from the window
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
 
     }
 
+    private void saveSampleName(){
+        Activity context = MainActivity.this;
+        // custom dialog
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.record_sample_dialog);
+        dialog.setTitle("Save Sample As...");
+
+        // set the custom dialog components - text, image and button
+        //TextView text = (TextView) dialog.findViewById(R.id.text);
+        //text.setText("Android custom dialog example!");
+        ImageView image = (ImageView) dialog.findViewById(R.id.image);
+
+        final EditText sampleName = (EditText) dialog.findViewById(R.id.presetName);
+
+
+        //
+        //
+        // image.setImageResource(R.drawable.ic_launcher);
+
+        Button acceptButton = (Button) dialog.findViewById(R.id.acceptButton);
+        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+
+        // if button is clicked, close the custom dialog
+        acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<String> sampleList = getSampleList();
+                sampleList.add(sampleName.getText().toString());
+                saveSampleList(sampleList);
+                dialog.dismiss();
+            }
+        });
+
+        // if button is clicked, close the custom dialog
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
+        //Here's the magic..
+        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+        //Set the dialog to immersive
+        dialog.getWindow().getDecorView().setSystemUiVisibility(
+                context.getWindow().getDecorView().getSystemUiVisibility());
+
+        //Show the dialog! (Hopefully no soft navigation...)
+        dialog.show();
+
+        //Clear the not focusable flag from the window
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
+    }
     private void sampleDialog(Button button){
 
         final Button chosenSample = button;
 
+        ArrayAdapter<String> adapter;
+        Activity context = MainActivity.this;
+        // custom dialog
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.choose_sample_dialog);
+        dialog.setTitle("Choose a sample...");
+
+        // set the custom dialog components - text, image and button
+        //TextView text = (TextView) dialog.findViewById(R.id.text);
+        //text.setText("Android custom dialog example!");
+        ImageView image = (ImageView) dialog.findViewById(R.id.image);
+        final ListView sampleListView = (ListView) dialog.findViewById(R.id.sampleList);
+
+        final List<String> sampleList = getSampleList();
+        if(sampleList != null){
+            // Defined Array values to show in ListView
+            String[] values = new String[sampleList.size()];
+
+            for(int i = 0; i < sampleList.size(); i++ ){
+                values[i] =  sampleList.get(i);
+            }
+
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_1, android.R.id.text1, values);
+
+            // Assign adapter to ListView
+            sampleListView.setAdapter(adapter);
+
+            // ListView Item Click Listener
+            sampleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+
+                    // ListView Clicked item index
+                    int itemPosition = position;
+
+                    // ListView Clicked item value
+                    chosenSample.setText(sampleList.get(position));
+                    dialog.dismiss();
+                    //Toast.makeText(eventChosen, Toast.LENGTH_LONG);
+
+                }
+
+            });
+        }
 
 
-        new AlertDialog.Builder(this)
-                .setCancelable(true)
-                .setTitle("Select a sample to assign")
-                .setMessage("")
+        //
+        //
+        // image.setImageResource(R.drawable.ic_launcher);
 
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
 
-                        chosenSample.setText("chosen sample");
-                        if (getSupportFragmentManager().findFragmentByTag(FRAGTAG) == null ) {
-                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                            ImmersiveModeFragment fragment = new ImmersiveModeFragment();
-                            transaction.add(fragment, FRAGTAG);
-                            transaction.commit();
-                        }
+        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
 
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        // if button is clicked, close the custom dialog
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
 
-                    }
-                })
-                .show();
+
+        //Here's the magic..
+        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+        //Set the dialog to immersive
+        dialog.getWindow().getDecorView().setSystemUiVisibility(
+                context.getWindow().getDecorView().getSystemUiVisibility());
+
+        //Show the dialog! (Hopefully no soft navigation...)
+        dialog.show();
+
+        //Clear the not focusable flag from the window
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
     }
 
+    private List<String> getSampleList(){
+        FileInputStream fileInputStream;
+
+        List<String> sampleList = new ArrayList<>();
+        try {
+            fileInputStream = openFileInput("sampleList");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            sampleList = (List<String>) objectInputStream.readObject();
+            objectInputStream.close();
+            return sampleList;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return sampleList;
+    }
+
+    private void viewSampleList(){
+
+        ArrayAdapter<String> adapter;
+        Activity context = MainActivity.this;
+        // custom dialog
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.choose_sample_dialog);
+        dialog.setTitle("Choose a sample...");
+
+        // set the custom dialog components - text, image and button
+        //TextView text = (TextView) dialog.findViewById(R.id.text);
+        //text.setText("Android custom dialog example!");
+        ImageView image = (ImageView) dialog.findViewById(R.id.image);
+        final ListView sampleListView = (ListView) dialog.findViewById(R.id.sampleList);
+
+        final List<String> sampleList = getSampleList();
+        if(sampleList != null){
+            // Defined Array values to show in ListView
+            String[] values = new String[sampleList.size()];
+
+            for(int i = 0; i < sampleList.size(); i++ ){
+                values[i] =  sampleList.get(i);
+            }
+
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_1, android.R.id.text1, values);
+
+            // Assign adapter to ListView
+            sampleListView.setAdapter(adapter);
+
+            // ListView Item Click Listener
+            sampleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+
+                    sampleList.remove(position);
+                    saveSampleList(sampleList);
+                    dialog.dismiss();
+                    //Toast.makeText(eventChosen, Toast.LENGTH_LONG);
+
+                }
+
+            });
+        }
+
+
+        //
+        //
+        // image.setImageResource(R.drawable.ic_launcher);
+
+
+        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+
+        // if button is clicked, close the custom dialog
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
+        //Here's the magic..
+        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+        //Set the dialog to immersive
+        dialog.getWindow().getDecorView().setSystemUiVisibility(
+                context.getWindow().getDecorView().getSystemUiVisibility());
+
+        //Show the dialog! (Hopefully no soft navigation...)
+        dialog.show();
+
+        //Clear the not focusable flag from the window
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
+    }
+
+    private void saveSampleList(List<String> sampleList){
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = openFileOutput("sampleList", Context.MODE_PRIVATE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            objectOutputStream.writeObject(sampleList);
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
     private void samplePlayMode(){
         final Button button11 = (Button) findViewById(R.id.button11);
         final Button button12 = (Button) findViewById(R.id.button12);
@@ -450,5 +695,47 @@ public class MainActivity extends SampleActivityBase {
 
     }
 
+    @SuppressLint("NewApi")
+    private void disableImmersiveMode() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_FULLSCREEN);
 
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private void enableImmersiveMode() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                            View.SYSTEM_UI_FLAG_FULLSCREEN |
+                            View.SYSTEM_UI_FLAG_IMMERSIVE |
+                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
+        }
+    }
+
+
+    /**
+     * Set the Immersive mode or not according to its state: enabled or not.
+     */
+    protected void updateSystemUiVisibility() {
+        // Retrieve if the Immersive mode is enabled or not.
+        enableImmersiveMode();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateSystemUiVisibility();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        updateSystemUiVisibility();
+    }
 }

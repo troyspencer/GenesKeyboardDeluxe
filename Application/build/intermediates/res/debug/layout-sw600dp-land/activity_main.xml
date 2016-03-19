@@ -194,13 +194,13 @@
                 </GridLayout>
 
                 <Button
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:text="REC"
                     android:id="@+id/recordButton"
                     android:background="@drawable/recordbutton"
                     android:layout_alignParentRight="true"
-                    android:layout_margin="10dp"
+                    android:layout_margin="20dp"
                     android:textColor="#000000" />
 
             </RelativeLayout>
@@ -369,13 +369,6 @@
 
     </RelativeLayout>
 
-    <fragment
-        android:name="com.example.android.common.logger.LogFragment"
-        android:id="@+id/log_fragment"
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp" />
 
 </LinearLayout>
 <!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/layout-sw600dp-land/activity_main.xml -->

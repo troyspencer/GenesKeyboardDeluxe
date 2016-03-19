@@ -279,6 +279,7 @@ containing a value of this type.
         public static final int tile=0x7f020008;
     }
     public static final class id {
+        public static final int acceptButton=0x7f09003b;
         public static final int alignBounds=0x7f090002;
         public static final int alignMargins=0x7f090003;
         public static final int assign=0x7f09001f;
@@ -300,6 +301,7 @@ containing a value of this type.
         public static final int button23=0x7f09001b;
         public static final int button24=0x7f09001c;
         public static final int button25=0x7f09001d;
+        public static final int cancelButton=0x7f090038;
         public static final int center=0x7f090005;
         public static final int center_horizontal=0x7f090006;
         public static final int center_vertical=0x7f090007;
@@ -311,6 +313,7 @@ containing a value of this type.
         public static final int fill_horizontal=0x7f09000c;
         public static final int fill_vertical=0x7f09000d;
         public static final int horizontal=0x7f090000;
+        public static final int image=0x7f090037;
         public static final int imageView=0x7f090024;
         public static final int key1=0x7f090025;
         public static final int key10=0x7f09002e;
@@ -326,9 +329,11 @@ containing a value of this type.
         public static final int load=0x7f090022;
         public static final int log_fragment=0x7f090036;
         public static final int myGrid=0x7f090013;
+        public static final int presetName=0x7f09003a;
         public static final int recordButton=0x7f090023;
         public static final int right=0x7f09000f;
-        public static final int sample_action=0x7f090037;
+        public static final int sampleList=0x7f090039;
+        public static final int sample_action=0x7f09003c;
         public static final int sample_main_layout=0x7f090012;
         public static final int save=0x7f090021;
         public static final int settlings=0x7f09001e;
@@ -338,6 +343,9 @@ containing a value of this type.
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
+        public static final int choose_sample_dialog=0x7f030001;
+        public static final int record_sample_dialog=0x7f030002;
+        public static final int save_preset_dialog=0x7f030003;
     }
     public static final class menu {
         public static final int main=0x7f080000;
