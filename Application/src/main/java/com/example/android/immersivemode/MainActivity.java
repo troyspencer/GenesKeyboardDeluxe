@@ -300,7 +300,7 @@ public class MainActivity extends SampleActivityBase {
             // custom dialog
             final Dialog dialog = new Dialog(context);
             dialog.setContentView(R.layout.choose_sample_dialog);
-            dialog.setTitle("Choose a sample...");
+            dialog.setTitle("Choose a preset...");
 
         //Here's the magic..
         //Set the dialog to not focusable (makes navigation ignore us adding the window)
@@ -326,13 +326,13 @@ public class MainActivity extends SampleActivityBase {
             ImageView image = (ImageView) dialog.findViewById(R.id.image);
             final ListView sampleListView = (ListView) dialog.findViewById(R.id.sampleList);
 
-            final List<String> sampleList = getSampleList();
-            if(sampleList != null){
+            final List<String> presetList = getPresetList();
+            if(presetList != null){
                 // Defined Array values to show in ListView
-                String[] values = new String[sampleList.size()];
+                String[] values = new String[presetList.size()];
 
-                for(int i = 0; i < sampleList.size(); i++ ){
-                    values[i] =  sampleList.get(i);
+                for(int i = 0; i < presetList.size(); i++ ){
+                    values[i] =  presetList.get(i);
                 }
 
                 adapter = new ArrayAdapter<String>(this,
@@ -351,6 +351,10 @@ public class MainActivity extends SampleActivityBase {
 
                         // ListView Clicked item value
 
+                        Map<String, String[]> presetMap = getPresetMap();
+                        String[] buttonArray = presetMap.get(presetList.get(position));
+                        putSampleArray(buttonArray);
+
                         dialog.dismiss();
 
                     }
@@ -358,6 +362,37 @@ public class MainActivity extends SampleActivityBase {
                 });
             }
     }
+
+    private List<String> getPresetList(){
+        FileInputStream fileInputStream;
+
+        List<String> presetList = new ArrayList<>();
+        try {
+            fileInputStream = openFileInput("presetList");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            presetList = (List<String>) objectInputStream.readObject();
+            objectInputStream.close();
+            return presetList;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return presetList;
+    }
+
+    private void savePresetList(List<String> presetList){
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = openFileOutput("presetList", Context.MODE_PRIVATE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            objectOutputStream.writeObject(presetList);
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void savePreset(){
 
         Activity context = MainActivity.this;
@@ -385,7 +420,15 @@ public class MainActivity extends SampleActivityBase {
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //presetName.getText().toString();
+
+                Map<String, String[]> presetMap = getPresetMap();
+                presetMap.put(presetName.getText().toString(), getSampleArray());
+                savePresetMap(presetMap);
+
+                List<String> presetList = getPresetList();
+                presetList.add(presetName.getText().toString());
+                savePresetList(presetList);
+
                 dialog.dismiss();
 
             }
@@ -420,6 +463,60 @@ public class MainActivity extends SampleActivityBase {
 
     }
 
+    private void putSampleArray(String[] sampleArray){
+        final Button button11 = (Button) findViewById(R.id.button11);
+        final Button button12 = (Button) findViewById(R.id.button12);
+        final Button button13 = (Button) findViewById(R.id.button13);
+        final Button button14 = (Button) findViewById(R.id.button14);
+        final Button button15 = (Button) findViewById(R.id.button15);
+        final Button button21 = (Button) findViewById(R.id.button21);
+        final Button button22 = (Button) findViewById(R.id.button22);
+        final Button button23 = (Button) findViewById(R.id.button23);
+        final Button button24 = (Button) findViewById(R.id.button24);
+        final Button button25 = (Button) findViewById(R.id.button25);
+
+        button11.setText(sampleArray[0]);
+        button12.setText(sampleArray[1]);
+        button13.setText(sampleArray[2]);
+        button14.setText(sampleArray[3]);
+        button15.setText(sampleArray[4]);
+        button21.setText(sampleArray[5]);
+        button22.setText(sampleArray[6]);
+        button23.setText(sampleArray[7]);
+        button24.setText(sampleArray[8]);
+        button25.setText(sampleArray[9]);
+
+    }
+    private String[] getSampleArray(){
+
+        final Button button11 = (Button) findViewById(R.id.button11);
+        final Button button12 = (Button) findViewById(R.id.button12);
+        final Button button13 = (Button) findViewById(R.id.button13);
+        final Button button14 = (Button) findViewById(R.id.button14);
+        final Button button15 = (Button) findViewById(R.id.button15);
+        final Button button21 = (Button) findViewById(R.id.button21);
+        final Button button22 = (Button) findViewById(R.id.button22);
+        final Button button23 = (Button) findViewById(R.id.button23);
+        final Button button24 = (Button) findViewById(R.id.button24);
+        final Button button25 = (Button) findViewById(R.id.button25);
+
+        String [] sampleArray = new String[12];
+
+        sampleArray[0] = button11.getText().toString();
+        sampleArray[1] = button12.getText().toString();
+        sampleArray[2] = button13.getText().toString();
+        sampleArray[3] = button14.getText().toString();
+        sampleArray[4] = button15.getText().toString();
+        sampleArray[5] = button21.getText().toString();
+        sampleArray[6] = button22.getText().toString();
+        sampleArray[7] = button23.getText().toString();
+        sampleArray[8] = button24.getText().toString();
+        sampleArray[9] = button25.getText().toString();
+
+        return sampleArray;
+
+
+    }
     private void saveSampleName(){
         Activity context = MainActivity.this;
         // custom dialog
@@ -768,6 +865,36 @@ public class MainActivity extends SampleActivityBase {
             }
         });
 
+    }
+
+    private Map<String, String[]> getPresetMap(){
+        FileInputStream fileInputStream;
+
+        Map<String, String[]> presetMap = new HashMap<String, String[]>();
+        try {
+            fileInputStream = openFileInput("presetMap");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            presetMap = (HashMap<String, String[]>) objectInputStream.readObject();
+            objectInputStream.close();
+            return presetMap;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return presetMap;
+    }
+
+    private void savePresetMap(Map<String, String[]> presetMap){
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = openFileOutput("presetMap", Context.MODE_PRIVATE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            objectOutputStream.writeObject(presetMap);
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @SuppressLint("NewApi")

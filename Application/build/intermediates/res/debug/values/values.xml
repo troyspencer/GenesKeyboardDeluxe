@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/exploded-aar/com.android.support/cardview-v7/23.1.0/res/values/values.xml -->
+    <!-- From: file:/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/exploded-aar/com.android.support/cardview-v7/23.1.0/res/values/values.xml -->
     <eat-comment/>
     <color name="cardview_dark_background">#FF202020</color>
     <color name="cardview_light_background">#FFFAFAFA</color>
@@ -12,10 +12,10 @@
     <dimen name="cardview_compat_inset_shadow">1dp</dimen>
     <dimen name="cardview_default_elevation">2dp</dimen>
     <dimen name="cardview_default_radius">2dp</dimen>
-    <!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/exploded-aar/com.android.support/gridlayout-v7/23.1.0/res/values/values.xml -->
+    <!-- From: file:/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/exploded-aar/com.android.support/gridlayout-v7/23.1.0/res/values/values.xml -->
     <eat-comment/>
     <dimen name="default_gap">8dip</dimen>
-    <!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/template-dimens.xml -->
+    <!-- From: file:/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/template-dimens.xml -->
     <eat-comment/>
     <dimen name="horizontal_page_margin">@dimen/margin_medium</dimen>
     <dimen name="margin_huge">64dp</dimen>
@@ -24,16 +24,16 @@
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_tiny">4dp</dimen>
     <dimen name="vertical_page_margin">@dimen/margin_medium</dimen>
-    <!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/base-strings.xml -->
+    <!-- From: file:/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/base-strings.xml -->
     <eat-comment/>
     <string name="app_name">Gene\'s Keyboard Deluxe</string>
-    <!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/strings.xml -->
+    <!-- From: file:/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="sample_action">Toggle immersive mode!</string>
-    <!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/template-styles.xml -->
+    <!-- From: file:/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/template-styles.xml -->
     <eat-comment/>
     <style name="AppTheme" parent="Theme.Base"/>
-    <!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/exploded-aar/com.android.support/cardview-v7/23.1.0/res/values/values.xml -->
+    <!-- From: file:/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/exploded-aar/com.android.support/cardview-v7/23.1.0/res/values/values.xml -->
     <eat-comment/>
     <style name="CardView">
         <item name="cardBackgroundColor">@color/cardview_light_background</item>
@@ -49,7 +49,7 @@
     <style name="CardView.Light">
         <item name="cardBackgroundColor">@color/cardview_light_background</item>
     </style>
-    <!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/template-styles.xml -->
+    <!-- From: file:/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/values/template-styles.xml -->
     <eat-comment/>
     <style name="Log" parent="Widget.SampleOutput">
         <item name="android:typeface">monospace</item>

@@ -2,39 +2,39 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\exploded-aar\com.android.support\gridlayout-v7\23.1.0\jars\classes.jar"
+        jar="/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/exploded-aar/com.android.support/gridlayout-v7/23.1.0/jars/classes.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="3713f30726299231eddfb206043ebb72a2519b6f">
-        <dex dex="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\pre-dexed\debug\classes-8379804ab0a29b23970f2a78be1e8986d72cc23d.jar" />
+        <dex dex="/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/pre-dexed/debug/classes-5cfda8be5e0cfdbb60c1be2419bb81061ef1fdc0.jar" />
     </item>
     <item
-        jar="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.2"
-        sha1="ddde541c289c8b816a8f8fd6c325d80788c522a6">
-        <dex dex="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\pre-dexed\debug\classes-2f5d15af7d7d2acfef9f71d6c8099334fe7683d2.jar" />
-    </item>
-    <item
-        jar="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\exploded-aar\com.android.support\cardview-v7\23.1.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.2"
-        sha1="d96886efea7cc74fbb3abd0e3b51d5638fc57be0">
-        <dex dex="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\pre-dexed\debug\classes-986445dc934f8273b87d84f9ace6e63dd350c668.jar" />
-    </item>
-    <item
-        jar="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\jars\libs\internal_impl-23.1.0.jar"
+        jar="/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.0/jars/libs/internal_impl-23.1.0.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="8716243bf04bae8d6c9ca94d27b9a9be7236f0a3">
-        <dex dex="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\pre-dexed\debug\internal_impl-23.1.0-839c6a7e74ec21e3d178ad92b39a7b59aa3f582e.jar" />
+        <dex dex="/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/pre-dexed/debug/internal_impl-23.1.0-835b633159f1cd2fc05cad1081e3d08e09ca2247.jar" />
     </item>
     <item
-        jar="C:\Users\Troy\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.0\support-annotations-23.1.0.jar"
+        jar="/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/exploded-aar/com.android.support/cardview-v7/23.1.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="d96886efea7cc74fbb3abd0e3b51d5638fc57be0">
+        <dex dex="/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/pre-dexed/debug/classes-73784cc392526344ee4ce39d1f6a48f6cbf4e53b.jar" />
+    </item>
+    <item
+        jar="/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ddde541c289c8b816a8f8fd6c325d80788c522a6">
+        <dex dex="/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/pre-dexed/debug/classes-b179920cc499ebd607d38127d9b7f2b170d0aa83.jar" />
+    </item>
+    <item
+        jar="/Users/troyspencer/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.0/support-annotations-23.1.0.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="92e3fc113ec3ee36b64603a38857b95700025633">
-        <dex dex="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\pre-dexed\debug\support-annotations-23.1.0-bc18b94aab60492faba9ef7f56e5db4dc63082ca.jar" />
+        <dex dex="/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/build/intermediates/pre-dexed/debug/support-annotations-23.1.0-a6d62cff38c4945720806944995f509a72cf20e8.jar" />
     </item>
 
 </items>
