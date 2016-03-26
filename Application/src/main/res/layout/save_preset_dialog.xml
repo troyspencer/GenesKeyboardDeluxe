@@ -18,18 +18,25 @@
         android:layout_alignParentStart="false"
         android:layout_alignTop="@+id/image" />
 
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sampleList"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/presetName" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Accept"
         android:id="@+id/acceptButton"
-        android:layout_alignParentBottom="false"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="false"
         android:background="@drawable/samplebutton"
         android:textColor="#000000"
         android:layout_margin="@dimen/margin_medium"
         android:layout_alignParentTop="false"
-        android:layout_below="@+id/presetName" />
+        android:layout_toLeftOf="@+id/cancelButton" />
 
     <Button
         android:layout_width="wrap_content"
@@ -37,11 +44,10 @@
         android:id="@+id/cancelButton"
         android:text="Cancel"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="false"
-        android:layout_alignParentRight="false"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:background="@drawable/samplebutton"
         android:textColor="#000000"
-        android:layout_margin="@dimen/margin_medium"
-        android:layout_below="@+id/presetName" />
+        android:layout_margin="@dimen/margin_medium" />
 
 </RelativeLayout>
