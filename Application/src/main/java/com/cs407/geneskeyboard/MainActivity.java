@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        super.onStop();  // Always call the superclass method first
+        super.onStop();
 
         saveCurrSampleArray();
         savePresetList();
@@ -274,30 +274,21 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayAdapter<String> adapter;
         Activity context = MainActivity.this;
+
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.choose_sample_dialog);
         dialog.setTitle("Choose a preset...");
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
 
-        //Here's the magic..
-        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        // IMMERSIVEMODE FIX
         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Set the dialog to immersive
         dialog.getWindow().getDecorView().setSystemUiVisibility(
                 context.getWindow().getDecorView().getSystemUiVisibility());
-
-        //Show the dialog! (Hopefully no soft navigation...)
         dialog.show();
-
-        //Clear the not focusable flag from the window
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
-
 
         final ListView presetListView = (ListView) dialog.findViewById(R.id.sampleList);
 
@@ -322,9 +313,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
 
-
                     // ListView Clicked item value
-
                     String[] buttonArray = presetMap.get(presetList.get(position));
                     putSampleArray(buttonArray);
 
@@ -378,6 +367,7 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayAdapter<String> adapter;
         Activity context = MainActivity.this;
+
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.save_preset_dialog);
@@ -411,9 +401,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
 
-
                     // ListView Clicked item value
-
                     String[] buttonArray = presetMap.get(presetList.get(position));
                     presetName.setText(presetList.get(position));
 
@@ -429,16 +417,12 @@ public class MainActivity extends AppCompatActivity {
 
 
                 if (presetMap.get(presetName.getText().toString()) != null) {
-
                     presetOverwrite(presetName.getText().toString());
-
                 }else {
-
                     presetMap.put(presetName.getText().toString(), getSampleArray());
-
                     presetList.add(presetName.getText().toString());
-
                 }
+
                 dialog.dismiss();
 
             }
@@ -452,22 +436,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        //Here's the magic..
-        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        // IMMERSIVEMODE FIX
         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Set the dialog to immersive
         dialog.getWindow().getDecorView().setSystemUiVisibility(
                 context.getWindow().getDecorView().getSystemUiVisibility());
-
-        //Show the dialog! (Hopefully no soft navigation...)
         dialog.show();
-
-        //Clear the not focusable flag from the window
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
 
@@ -593,22 +567,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        //Here's the magic..
-        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        // IMMERSIVEMODE FIX
         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Set the dialog to immersive
         dialog.getWindow().getDecorView().setSystemUiVisibility(
                 context.getWindow().getDecorView().getSystemUiVisibility());
-
-        //Show the dialog! (Hopefully no soft navigation...)
         dialog.show();
-
-        //Clear the not focusable flag from the window
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
     }
@@ -619,6 +583,7 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayAdapter<String> adapter;
         Activity context = MainActivity.this;
+
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.choose_sample_dialog);
@@ -647,7 +612,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
 
-
                     // ListView Clicked item value
                     chosenSample.setText(sampleList.get(position));
                     dialog.dismiss();
@@ -667,22 +631,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        //Here's the magic..
-        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        // IMMERSIVEMODE FIX
         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Set the dialog to immersive
         dialog.getWindow().getDecorView().setSystemUiVisibility(
                 context.getWindow().getDecorView().getSystemUiVisibility());
-
-        //Show the dialog! (Hopefully no soft navigation...)
         dialog.show();
-
-        //Clear the not focusable flag from the window
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
     }
@@ -707,6 +661,7 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayAdapter<String> adapter;
         Activity context = MainActivity.this;
+
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.choose_sample_dialog);
@@ -737,7 +692,6 @@ public class MainActivity extends AppCompatActivity {
 
                     sampleList.remove(position);
                     dialog.dismiss();
-                    //Toast.makeText(eventChosen, Toast.LENGTH_LONG);
 
                 }
 
@@ -756,22 +710,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        //Here's the magic..
-        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        // IMMERSIVEMODE FIX
         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Set the dialog to immersive
         dialog.getWindow().getDecorView().setSystemUiVisibility(
                 context.getWindow().getDecorView().getSystemUiVisibility());
-
-        //Show the dialog! (Hopefully no soft navigation...)
         dialog.show();
-
-        //Clear the not focusable flag from the window
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
     }
