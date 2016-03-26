@@ -1,57 +1,21 @@
-/*
-* Copyright 2013 The Android Open Source Project
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
-
-package com.example.android.immersivemode;
+package com.cs407.geneskeyboard;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.support.v7.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.LightingColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.text.Html;
-import android.text.InputType;
-import android.util.TypedValue;
-import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.android.common.activities.SampleActivityBase;
-import com.example.android.common.logger.Log;
-import com.example.android.common.logger.LogFragment;
-import com.example.android.common.logger.LogWrapper;
-import com.example.android.common.logger.MessageOnlyLogFilter;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -61,17 +25,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * A simple launcher activity containing a summary sample description
- * and a few action bar buttons.
- */
-public class MainActivity extends SampleActivityBase {
+public class MainActivity extends AppCompatActivity {
 
+
+    private Map<String, String[]> presetMap;
+    private List<String> presetList;
+    private String[] currSampleArray;
+    private List<String> sampleList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getPresetMap();
+        getPresetList();
+        getSampleList();
+        getCurrSampleArray();
+        putSampleArray(currSampleArray);
 
         Button assignSample = (Button) findViewById(R.id.assign);
         Button savePreset = (Button) findViewById(R.id.save);
@@ -125,11 +96,17 @@ public class MainActivity extends SampleActivityBase {
         });
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
 
+        saveCurrSampleArray();
+        savePresetList();
+        savePresetMap();
+        saveSampleList();
 
-
-
-    private void highLightSamples(){
+    }
+    private void highLightSamples() {
 
         Button button11 = (Button) findViewById(R.id.button11);
         Button button12 = (Button) findViewById(R.id.button12);
@@ -154,7 +131,7 @@ public class MainActivity extends SampleActivityBase {
         button25.setBackgroundResource(R.drawable.highlighted_sample_button);
     }
 
-    private void unhighLightSamples(){
+    private void unhighLightSamples() {
 
         Button button11 = (Button) findViewById(R.id.button11);
         Button button12 = (Button) findViewById(R.id.button12);
@@ -180,7 +157,7 @@ public class MainActivity extends SampleActivityBase {
 
     }
 
-    private void selectSample(){
+    private void selectSample() {
 
         final Button button11 = (Button) findViewById(R.id.button11);
         final Button button12 = (Button) findViewById(R.id.button12);
@@ -292,94 +269,87 @@ public class MainActivity extends SampleActivityBase {
         });
     }
 
-    private void loadPreset(){
+    private void loadPreset() {
 
-            //TODO add getPresetMap, savePresetMap
-            ArrayAdapter<String> adapter;
-            Activity context = MainActivity.this;
-            // custom dialog
-            final Dialog dialog = new Dialog(context);
-            dialog.setContentView(R.layout.choose_sample_dialog);
-            dialog.setTitle("Choose a preset...");
 
-        //Here's the magic..
-        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        ArrayAdapter<String> adapter;
+        Activity context = MainActivity.this;
+
+        // custom dialog
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.choose_sample_dialog);
+        dialog.setTitle("Choose a preset...");
+        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+
+        // IMMERSIVEMODE FIX
         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Set the dialog to immersive
         dialog.getWindow().getDecorView().setSystemUiVisibility(
                 context.getWindow().getDecorView().getSystemUiVisibility());
-
-        //Show the dialog! (Hopefully no soft navigation...)
         dialog.show();
-
-        //Clear the not focusable flag from the window
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
 
-            // set the custom dialog components - text, image and button
-            //TextView text = (TextView) dialog.findViewById(R.id.text);
-            //text.setText("Android custom dialog example!");
-            ImageView image = (ImageView) dialog.findViewById(R.id.image);
-            final ListView sampleListView = (ListView) dialog.findViewById(R.id.sampleList);
+        final ListView presetListView = (ListView) dialog.findViewById(R.id.sampleList);
 
-            final List<String> presetList = getPresetList();
-            if(presetList != null){
-                // Defined Array values to show in ListView
-                String[] values = new String[presetList.size()];
+        if (presetList != null) {
+            // Defined Array values to show in ListView
+            String[] values = new String[presetList.size()];
 
-                for(int i = 0; i < presetList.size(); i++ ){
-                    values[i] =  presetList.get(i);
+            for (int i = 0; i < presetList.size(); i++) {
+                values[i] = presetList.get(i);
+            }
+
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_1, android.R.id.text1, values);
+
+            // Assign adapter to ListView
+            presetListView.setAdapter(adapter);
+
+            // ListView Item Click Listener
+            presetListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+
+                    // ListView Clicked item value
+                    String[] buttonArray = presetMap.get(presetList.get(position));
+                    putSampleArray(buttonArray);
+
+                    dialog.dismiss();
+
                 }
 
-                adapter = new ArrayAdapter<String>(this,
-                        android.R.layout.simple_list_item_1, android.R.id.text1, values);
+            });
+        }
 
-                // Assign adapter to ListView
-                sampleListView.setAdapter(adapter);
-
-                // ListView Item Click Listener
-                sampleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-
-
-                        // ListView Clicked item value
-
-                        Map<String, String[]> presetMap = getPresetMap();
-                        String[] buttonArray = presetMap.get(presetList.get(position));
-                        putSampleArray(buttonArray);
-
-                        dialog.dismiss();
-
-                    }
-
-                });
+        // if button is clicked, close the custom dialog
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
             }
+        });
     }
 
-    private List<String> getPresetList(){
+    private List<String> getPresetList() {
         FileInputStream fileInputStream;
 
-        List<String> presetList = new ArrayList<>();
         try {
             fileInputStream = openFileInput("presetList");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             presetList = (List<String>) objectInputStream.readObject();
             objectInputStream.close();
             return presetList;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
+            presetList = new ArrayList<String>();
         }
         return presetList;
     }
 
-    private void savePresetList(List<String> presetList){
+    private void savePresetList() {
         FileOutputStream fileOutputStream;
         try {
             fileOutputStream = openFileOutput("presetList", Context.MODE_PRIVATE);
@@ -388,46 +358,70 @@ public class MainActivity extends SampleActivityBase {
             objectOutputStream.writeObject(presetList);
             objectOutputStream.close();
             fileOutputStream.close();
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void savePreset(){
+    private void savePreset() {
 
+        ArrayAdapter<String> adapter;
         Activity context = MainActivity.this;
+
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.save_preset_dialog);
         dialog.setTitle("Save Preset As...");
 
-        // set the custom dialog components - text, image and button
-        //TextView text = (TextView) dialog.findViewById(R.id.text);
-        //text.setText("Android custom dialog example!");
-        ImageView image = (ImageView) dialog.findViewById(R.id.image);
-
         final EditText presetName = (EditText) dialog.findViewById(R.id.presetName);
-
-
-        //
-        //
-        // image.setImageResource(R.drawable.ic_launcher);
 
         Button acceptButton = (Button) dialog.findViewById(R.id.acceptButton);
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+
+        final ListView presetListView = (ListView) dialog.findViewById(R.id.sampleList);
+
+        if (presetList != null) {
+            // Defined Array values to show in ListView
+            String[] values = new String[presetList.size()];
+
+            for (int i = 0; i < presetList.size(); i++) {
+                values[i] = presetList.get(i);
+            }
+
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_1, android.R.id.text1, values);
+
+            // Assign adapter to ListView
+            presetListView.setAdapter(adapter);
+
+            // ListView Item Click Listener
+            presetListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+
+                    // ListView Clicked item value
+                    String[] buttonArray = presetMap.get(presetList.get(position));
+                    presetName.setText(presetList.get(position));
+
+                }
+
+            });
+        }
 
         // if button is clicked, close the custom dialog
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Map<String, String[]> presetMap = getPresetMap();
-                presetMap.put(presetName.getText().toString(), getSampleArray());
-                savePresetMap(presetMap);
 
-                List<String> presetList = getPresetList();
-                presetList.add(presetName.getText().toString());
-                savePresetList(presetList);
+                if (presetMap.get(presetName.getText().toString()) != null) {
+                    presetOverwrite(presetName.getText().toString());
+                }else {
+                    presetMap.put(presetName.getText().toString(), getSampleArray());
+                    presetList.add(presetName.getText().toString());
+                }
 
                 dialog.dismiss();
 
@@ -442,28 +436,49 @@ public class MainActivity extends SampleActivityBase {
             }
         });
 
-
-        //Here's the magic..
-        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        // IMMERSIVEMODE FIX
         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Set the dialog to immersive
         dialog.getWindow().getDecorView().setSystemUiVisibility(
                 context.getWindow().getDecorView().getSystemUiVisibility());
-
-        //Show the dialog! (Hopefully no soft navigation...)
         dialog.show();
-
-        //Clear the not focusable flag from the window
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
 
     }
 
-    private void putSampleArray(String[] sampleArray){
+    private String[] getCurrSampleArray(){
+        FileInputStream fileInputStream;
+
+        try {
+            fileInputStream = openFileInput("currSampleArray");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            currSampleArray = (String[]) objectInputStream.readObject();
+            objectInputStream.close();
+            return currSampleArray;
+        } catch (Exception e) {
+            e.printStackTrace();
+            currSampleArray = getSampleArray();
+
+        }
+        return currSampleArray;
+    }
+
+    private void saveCurrSampleArray(){
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = openFileOutput("currSampleArray", Context.MODE_PRIVATE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            objectOutputStream.writeObject(getSampleArray());
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void putSampleArray(String[] sampleArray) {
         final Button button11 = (Button) findViewById(R.id.button11);
         final Button button12 = (Button) findViewById(R.id.button12);
         final Button button13 = (Button) findViewById(R.id.button13);
@@ -487,7 +502,8 @@ public class MainActivity extends SampleActivityBase {
         button25.setText(sampleArray[9]);
 
     }
-    private String[] getSampleArray(){
+
+    private String[] getSampleArray() {
 
         final Button button11 = (Button) findViewById(R.id.button11);
         final Button button12 = (Button) findViewById(R.id.button12);
@@ -500,7 +516,7 @@ public class MainActivity extends SampleActivityBase {
         final Button button24 = (Button) findViewById(R.id.button24);
         final Button button25 = (Button) findViewById(R.id.button25);
 
-        String [] sampleArray = new String[12];
+        String[] sampleArray = new String[12];
 
         sampleArray[0] = button11.getText().toString();
         sampleArray[1] = button12.getText().toString();
@@ -515,26 +531,16 @@ public class MainActivity extends SampleActivityBase {
 
         return sampleArray;
 
-
     }
-    private void saveSampleName(){
+
+    private void saveSampleName() {
         Activity context = MainActivity.this;
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.record_sample_dialog);
         dialog.setTitle("Save Sample As...");
 
-        // set the custom dialog components - text, image and button
-        //TextView text = (TextView) dialog.findViewById(R.id.text);
-        //text.setText("Android custom dialog example!");
-        ImageView image = (ImageView) dialog.findViewById(R.id.image);
-
         final EditText sampleName = (EditText) dialog.findViewById(R.id.presetName);
-
-
-        //
-        //
-        // image.setImageResource(R.drawable.ic_launcher);
 
         Button acceptButton = (Button) dialog.findViewById(R.id.acceptButton);
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
@@ -543,9 +549,12 @@ public class MainActivity extends SampleActivityBase {
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<String> sampleList = getSampleList();
-                sampleList.add(sampleName.getText().toString());
-                saveSampleList(sampleList);
+
+                if(sampleList.contains(sampleName.getText().toString())){
+                    sampleOverwrite(sampleName.getText().toString());
+                }else {
+                    sampleList.add(sampleName.getText().toString());
+                }
                 dialog.dismiss();
             }
         });
@@ -558,49 +567,36 @@ public class MainActivity extends SampleActivityBase {
             }
         });
 
-
-        //Here's the magic..
-        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        // IMMERSIVEMODE FIX
         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Set the dialog to immersive
         dialog.getWindow().getDecorView().setSystemUiVisibility(
                 context.getWindow().getDecorView().getSystemUiVisibility());
-
-        //Show the dialog! (Hopefully no soft navigation...)
         dialog.show();
-
-        //Clear the not focusable flag from the window
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
     }
-    private void sampleDialog(Button button){
+
+    private void sampleDialog(Button button) {
 
         final Button chosenSample = button;
 
         ArrayAdapter<String> adapter;
         Activity context = MainActivity.this;
+
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.choose_sample_dialog);
         dialog.setTitle("Choose a sample...");
 
-        // set the custom dialog components - text, image and button
-        //TextView text = (TextView) dialog.findViewById(R.id.text);
-        //text.setText("Android custom dialog example!");
-        ImageView image = (ImageView) dialog.findViewById(R.id.image);
         final ListView sampleListView = (ListView) dialog.findViewById(R.id.sampleList);
 
-        final List<String> sampleList = getSampleList();
-        if(sampleList != null){
+        if (sampleList != null) {
             // Defined Array values to show in ListView
             String[] values = new String[sampleList.size()];
 
-            for(int i = 0; i < sampleList.size(); i++ ){
-                values[i] =  sampleList.get(i);
+            for (int i = 0; i < sampleList.size(); i++) {
+                values[i] = sampleList.get(i);
             }
 
             adapter = new ArrayAdapter<String>(this,
@@ -616,7 +612,6 @@ public class MainActivity extends SampleActivityBase {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
 
-
                     // ListView Clicked item value
                     chosenSample.setText(sampleList.get(position));
                     dialog.dismiss();
@@ -625,12 +620,6 @@ public class MainActivity extends SampleActivityBase {
 
             });
         }
-
-
-        //
-        //
-        // image.setImageResource(R.drawable.ic_launcher);
-
 
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
 
@@ -642,64 +631,50 @@ public class MainActivity extends SampleActivityBase {
             }
         });
 
-
-        //Here's the magic..
-        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        // IMMERSIVEMODE FIX
         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Set the dialog to immersive
         dialog.getWindow().getDecorView().setSystemUiVisibility(
                 context.getWindow().getDecorView().getSystemUiVisibility());
-
-        //Show the dialog! (Hopefully no soft navigation...)
         dialog.show();
-
-        //Clear the not focusable flag from the window
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
     }
 
-    private List<String> getSampleList(){
+    private List<String> getSampleList() {
         FileInputStream fileInputStream;
 
-        List<String> sampleList = new ArrayList<>();
         try {
             fileInputStream = openFileInput("sampleList");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             sampleList = (List<String>) objectInputStream.readObject();
             objectInputStream.close();
             return sampleList;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
+            sampleList = new ArrayList<String>();
         }
         return sampleList;
     }
 
-    private void viewSampleList(){
+    private void viewSampleList() {
 
         ArrayAdapter<String> adapter;
         Activity context = MainActivity.this;
+
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.choose_sample_dialog);
         dialog.setTitle("Choose a sample...");
 
-        // set the custom dialog components - text, image and button
-        //TextView text = (TextView) dialog.findViewById(R.id.text);
-        //text.setText("Android custom dialog example!");
-        ImageView image = (ImageView) dialog.findViewById(R.id.image);
         final ListView sampleListView = (ListView) dialog.findViewById(R.id.sampleList);
 
-        final List<String> sampleList = getSampleList();
-        if(sampleList != null){
+        if (sampleList != null) {
             // Defined Array values to show in ListView
             String[] values = new String[sampleList.size()];
 
-            for(int i = 0; i < sampleList.size(); i++ ){
-                values[i] =  sampleList.get(i);
+            for (int i = 0; i < sampleList.size(); i++) {
+                values[i] = sampleList.get(i);
             }
 
             adapter = new ArrayAdapter<String>(this,
@@ -716,19 +691,13 @@ public class MainActivity extends SampleActivityBase {
                                         int position, long id) {
 
                     sampleList.remove(position);
-                    saveSampleList(sampleList);
                     dialog.dismiss();
-                    //Toast.makeText(eventChosen, Toast.LENGTH_LONG);
 
                 }
 
             });
         }
 
-
-        //
-        //
-        // image.setImageResource(R.drawable.ic_launcher);
 
 
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
@@ -741,27 +710,17 @@ public class MainActivity extends SampleActivityBase {
             }
         });
 
-
-        //Here's the magic..
-        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        // IMMERSIVEMODE FIX
         dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Set the dialog to immersive
         dialog.getWindow().getDecorView().setSystemUiVisibility(
                 context.getWindow().getDecorView().getSystemUiVisibility());
-
-        //Show the dialog! (Hopefully no soft navigation...)
         dialog.show();
-
-        //Clear the not focusable flag from the window
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
-        //Update the WindowManager with the new attributes (no nicer way I know of to do this)..
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
     }
 
-    private void saveSampleList(List<String> sampleList){
+    private void saveSampleList() {
         FileOutputStream fileOutputStream;
         try {
             fileOutputStream = openFileOutput("sampleList", Context.MODE_PRIVATE);
@@ -770,11 +729,12 @@ public class MainActivity extends SampleActivityBase {
             objectOutputStream.writeObject(sampleList);
             objectOutputStream.close();
             fileOutputStream.close();
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    private void samplePlayMode(){
+
+    private void samplePlayMode() {
         final Button button11 = (Button) findViewById(R.id.button11);
         final Button button12 = (Button) findViewById(R.id.button12);
         final Button button13 = (Button) findViewById(R.id.button13);
@@ -867,23 +827,23 @@ public class MainActivity extends SampleActivityBase {
 
     }
 
-    private Map<String, String[]> getPresetMap(){
+    private Map<String, String[]> getPresetMap() {
         FileInputStream fileInputStream;
 
-        Map<String, String[]> presetMap = new HashMap<String, String[]>();
         try {
             fileInputStream = openFileInput("presetMap");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             presetMap = (HashMap<String, String[]>) objectInputStream.readObject();
             objectInputStream.close();
             return presetMap;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
+            presetMap = new HashMap<String, String[]>();
         }
         return presetMap;
     }
 
-    private void savePresetMap(Map<String, String[]> presetMap){
+    private void savePresetMap() {
         FileOutputStream fileOutputStream;
         try {
             fileOutputStream = openFileOutput("presetMap", Context.MODE_PRIVATE);
@@ -892,11 +852,62 @@ public class MainActivity extends SampleActivityBase {
             objectOutputStream.writeObject(presetMap);
             objectOutputStream.close();
             fileOutputStream.close();
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void presetOverwrite(final String presetToAdd){
+
+        new AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setTitle("Overwrite preset?")
+                .setMessage("")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        presetMap.put(presetToAdd, getSampleArray());
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        savePreset();
+                    }
+                })
+                .show();
+
+
+
+    }
+
+    private void sampleOverwrite(final String sampleToAdd){
+
+        new AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setTitle("Overwrite sample?")
+                .setMessage("")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        sampleList.add(sampleToAdd);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        saveSampleName();
+                    }
+                })
+                .show();
+
+
+
+    }
     @SuppressLint("NewApi")
     private void disableImmersiveMode() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
