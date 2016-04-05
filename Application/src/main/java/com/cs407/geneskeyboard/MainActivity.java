@@ -38,25 +38,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RelativeLayout keyboard = (RelativeLayout) findViewById(R.id.keyboard);
-        Button blackkey1 = (Button) findViewById(R.id.blackkey1);
-        Button blackkey2 = (Button) findViewById(R.id.blackkey2);
-        Button blackkey3 = (Button) findViewById(R.id.blackkey3);
-        Button blackkey4 = (Button) findViewById(R.id.blackkey4);
-        Button blackkey5 = (Button) findViewById(R.id.blackkey5);
-        Button blackkey6 = (Button) findViewById(R.id.blackkey6);
-        Button blackkey7 = (Button) findViewById(R.id.blackkey7);
-
-        blackkey1.bringToFront();
-        blackkey2.bringToFront();
-        blackkey3.bringToFront();
-        blackkey4.bringToFront();
-        blackkey5.bringToFront();
-        blackkey6.bringToFront();
-        blackkey7.bringToFront();
-
-        keyboard.invalidate();
-
         getPresetMap();
         getPresetList();
         getSampleList();
@@ -117,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         saveSampleList();
 
     }
+    
     private void highLightSamples() {
 
         Button button11 = (Button) findViewById(R.id.button11);
