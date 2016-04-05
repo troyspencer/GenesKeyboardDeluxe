@@ -20,11 +20,5 @@
     android:layout_height="fill_parent"
     android:id="@+id/sample_main_layout" >
 
-    <fragment
-        android:name="com.cs407.geneskeyboard.common.logger.LogFragment"
-        android:id="@+id/log_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp" />
 </LinearLayout>
-<!-- From: file:/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/layout-sw600dp/activity_main.xml -->
+<!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/layout-sw600dp/activity_main.xml -->
