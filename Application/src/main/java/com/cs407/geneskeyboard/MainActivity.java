@@ -2,8 +2,6 @@ package com.cs407.geneskeyboard;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Context;
@@ -15,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,6 +38,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        RelativeLayout keyboard = (RelativeLayout) findViewById(R.id.keyboard);
+        Button blackkey1 = (Button) findViewById(R.id.blackkey1);
+        Button blackkey2 = (Button) findViewById(R.id.blackkey2);
+        Button blackkey3 = (Button) findViewById(R.id.blackkey3);
+        Button blackkey4 = (Button) findViewById(R.id.blackkey4);
+        Button blackkey5 = (Button) findViewById(R.id.blackkey5);
+        Button blackkey6 = (Button) findViewById(R.id.blackkey6);
+        Button blackkey7 = (Button) findViewById(R.id.blackkey7);
+
+        blackkey1.bringToFront();
+        blackkey2.bringToFront();
+        blackkey3.bringToFront();
+        blackkey4.bringToFront();
+        blackkey5.bringToFront();
+        blackkey6.bringToFront();
+        blackkey7.bringToFront();
+
+        keyboard.invalidate();
+
         getPresetMap();
         getPresetList();
         getSampleList();
@@ -55,28 +74,21 @@ public class MainActivity extends AppCompatActivity {
         loadPreset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 loadPreset();
-
             }
         });
 
         savePreset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 savePreset();
-
             }
         });
-
 
         assignSample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 highLightSamples();
-
                 selectSample();
             }
         });
@@ -87,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
                 saveSampleName();
             }
         });
-
         editSample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -370,10 +381,10 @@ public class MainActivity extends AppCompatActivity {
 
         // custom dialog
         final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.save_preset_dialog);
+        dialog.setContentView(R.layout.save_dialog);
         dialog.setTitle("Save Preset As...");
 
-        final EditText presetName = (EditText) dialog.findViewById(R.id.presetName);
+        final EditText presetName = (EditText) dialog.findViewById(R.id.saveName);
 
         Button acceptButton = (Button) dialog.findViewById(R.id.acceptButton);
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
@@ -534,16 +545,49 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveSampleName() {
+        ArrayAdapter<String> adapter;
         Activity context = MainActivity.this;
+
         // custom dialog
         final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.record_sample_dialog);
+        dialog.setContentView(R.layout.save_dialog);
         dialog.setTitle("Save Sample As...");
 
-        final EditText sampleName = (EditText) dialog.findViewById(R.id.presetName);
+        final EditText sampleName = (EditText) dialog.findViewById(R.id.saveName);
 
         Button acceptButton = (Button) dialog.findViewById(R.id.acceptButton);
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+
+        final ListView sampleListView = (ListView) dialog.findViewById(R.id.sampleList);
+
+        if (sampleList != null) {
+            // Defined Array values to show in ListView
+            String[] values = new String[sampleList.size()];
+
+            for (int i = 0; i < sampleList.size(); i++) {
+                values[i] = sampleList.get(i);
+            }
+
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_1, android.R.id.text1, values);
+
+            // Assign adapter to ListView
+            sampleListView.setAdapter(adapter);
+
+            // ListView Item Click Listener
+            sampleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+
+                    // ListView Clicked item value
+                    sampleName.setText(sampleList.get(position));
+
+                }
+
+            });
+        }
 
         // if button is clicked, close the custom dialog
         acceptButton.setOnClickListener(new View.OnClickListener() {
@@ -859,53 +903,85 @@ public class MainActivity extends AppCompatActivity {
 
     private void presetOverwrite(final String presetToAdd){
 
-        new AlertDialog.Builder(this)
-                .setCancelable(true)
-                .setTitle("Overwrite preset?")
-                .setMessage("")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        Activity context = MainActivity.this;
+        // custom dialog
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.overwrite_dialog);
+        dialog.setTitle("Overwrite preset?");
 
-                        presetMap.put(presetToAdd, getSampleArray());
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        final TextView overwriteName = (TextView) dialog.findViewById(R.id.overwriteName);
 
-                        savePreset();
-                    }
-                })
-                .show();
+        overwriteName.setText(presetToAdd);
+        Button acceptButton = (Button) dialog.findViewById(R.id.acceptButton);
+        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
 
+        // if button is clicked, close the custom dialog
+        acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presetMap.put(presetToAdd, getSampleArray());
+                dialog.dismiss();
+            }
+        });
 
+        // if button is clicked, close the custom dialog
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        // IMMERSIVEMODE FIX
+        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        dialog.getWindow().getDecorView().setSystemUiVisibility(
+                context.getWindow().getDecorView().getSystemUiVisibility());
+        dialog.show();
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
 
     }
 
     private void sampleOverwrite(final String sampleToAdd){
 
-        new AlertDialog.Builder(this)
-                .setCancelable(true)
-                .setTitle("Overwrite sample?")
-                .setMessage("")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        Activity context = MainActivity.this;
+        // custom dialog
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.overwrite_dialog);
+        dialog.setTitle("Overwrite sample?");
 
-                        sampleList.add(sampleToAdd);
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        final TextView overwriteName = (TextView) dialog.findViewById(R.id.overwriteName);
 
-                        saveSampleName();
-                    }
-                })
-                .show();
+        overwriteName.setText(sampleToAdd);
+        Button acceptButton = (Button) dialog.findViewById(R.id.acceptButton);
+        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
 
+        // if button is clicked, close the custom dialog
+        acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                dialog.dismiss();
+            }
+        });
+
+        // if button is clicked, close the custom dialog
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        // IMMERSIVEMODE FIX
+        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        dialog.getWindow().getDecorView().setSystemUiVisibility(
+                context.getWindow().getDecorView().getSystemUiVisibility());
+        dialog.show();
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
 
     }
     @SuppressLint("NewApi")

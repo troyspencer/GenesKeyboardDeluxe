@@ -33,7 +33,7 @@
                     <Button
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:text="Sample"
+                        android:text=""
                         android:id="@+id/button11"
                         android:contextClickable="false"
                         android:textColor="#000000"
@@ -43,7 +43,7 @@
                     <Button
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:text="Sample"
+                        android:text=""
                         android:id="@+id/button12"
                         android:contextClickable="false"
                         android:textColor="#000000"
@@ -53,7 +53,7 @@
                     <Button
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:text="Sample"
+                        android:text=""
                         android:id="@+id/button13"
                         android:contextClickable="false"
                         android:textColor="#000000"
@@ -63,7 +63,7 @@
                     <Button
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:text="Sample"
+                        android:text=""
                         android:id="@+id/button14"
                         android:contextClickable="false"
                         android:textColor="#000000"
@@ -73,7 +73,7 @@
                     <Button
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:text="Sample"
+                        android:text=""
                         android:id="@+id/button15"
                         android:contextClickable="false"
                         android:textColor="#000000"
@@ -83,7 +83,7 @@
                     <Button
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:text="Sample"
+                        android:text=""
                         android:id="@+id/button21"
                         android:contextClickable="false"
                         android:textColor="#000000"
@@ -93,7 +93,7 @@
                     <Button
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:text="Sample"
+                        android:text=""
                         android:id="@+id/button22"
                         android:contextClickable="false"
                         android:textColor="#000000"
@@ -103,7 +103,7 @@
                     <Button
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:text="Sample"
+                        android:text=""
                         android:id="@+id/button23"
                         android:contextClickable="false"
                         android:textColor="#000000"
@@ -113,7 +113,7 @@
                     <Button
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:text="Sample"
+                        android:text=""
                         android:id="@+id/button24"
                         android:contextClickable="false"
                         android:textColor="#000000"
@@ -123,7 +123,7 @@
                     <Button
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:text="Sample"
+                        android:text=""
                         android:id="@+id/button25"
                         android:contextClickable="false"
                         android:textColor="#000000"
@@ -190,9 +190,12 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:splitMotionEvents="true"
+                android:clipChildren="false"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="3">
+                android:layout_weight="3"
+                android:id="@+id/keyboard">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -200,152 +203,186 @@
                     android:id="@+id/imageView"
                     android:src="#000000" />
 
-                <LinearLayout
-                    android:orientation="horizontal"
+                <ImageView
+                    android:layout_width="5dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/leftBlue"
+                    android:background="#38b7ed"
+                    />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/key1"
+                    android:background="@drawable/key"
+                    android:stateListAnimator="@null"
+                    android:layout_toRightOf="@+id/leftBlue"
+                     />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/key2"
+                    android:background="@drawable/key"
+                    android:layout_toRightOf="@+id/key1"
+                    android:stateListAnimator="@null"
+                     />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/key3"
+                    android:background="@drawable/key"
+                    android:layout_toRightOf="@+id/key2"
+                    android:stateListAnimator="@null"
+                     />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/key4"
+                    android:background="@drawable/key"
+                    android:layout_toRightOf="@+id/key3"
+                    android:stateListAnimator="@null"
+                     />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/key5"
+                    android:background="@drawable/key"
+                    android:layout_toRightOf="@+id/key4"
+                    android:stateListAnimator="@null"
+                     />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/key6"
+                    android:background="@drawable/key"
+                    android:layout_toRightOf="@+id/key5"
+                    android:stateListAnimator="@null"
+                     />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/key7"
+                    android:background="@drawable/key"
+                    android:layout_toRightOf="@+id/key6"
+                    android:stateListAnimator="@null"
+                     />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/key8"
+                    android:background="@drawable/key"
+                    android:layout_toRightOf="@+id/key7"
+                    android:stateListAnimator="@null"
+                     />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/key9"
+                    android:background="@drawable/key"
+                    android:layout_toRightOf="@+id/key8"
+                    android:stateListAnimator="@null"
+                     />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/key10"
+                    android:background="@drawable/key"
+                    android:layout_toRightOf="@+id/key9"
+                    android:stateListAnimator="@null"
+                     />
+
+                <Space
+                    android:layout_width="29dp"
+                    android:layout_height="200dp"
+                    android:id="@+id/space1"
+                    />
+
+                <Button
+                    android:layout_width="63dp"
+                    android:layout_height="140dp"
+                    android:id="@+id/blackkey1"
+                    android:background="@drawable/blackkey"
+                    android:layout_toRightOf="@+id/space1"
+                    />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="140dp"
+                    android:id="@+id/blackkey2"
+                    android:background="@drawable/blackkey"
+                    android:layout_toRightOf="@+id/blackkey1"
+                    />
+
+                <Space
+                    android:layout_width="58dp"
+                    android:layout_height="200dp"
+                    android:id="@+id/space2"
+                    android:layout_toRightOf="@+id/blackkey2"
+                    />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="140dp"
+                    android:id="@+id/blackkey3"
+                    android:background="@drawable/blackkey"
+                    android:layout_toRightOf="@+id/space2"
+                    />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="140dp"
+                    android:id="@+id/blackkey4"
+                    android:background="@drawable/blackkey"
+                    android:layout_toRightOf="@+id/blackkey3"
+                    />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="140dp"
+                    android:id="@+id/blackkey5"
+                    android:background="@drawable/blackkey"
+                    android:layout_toRightOf="@+id/blackkey4"
+                    />
+
+                <Space
+                    android:layout_width="58dp"
+                    android:layout_height="200dp"
+                    android:id="@+id/space3"
+                    android:layout_toRightOf="@+id/blackkey5"
+                    />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="140dp"
+                    android:id="@+id/blackkey6"
+                    android:background="@drawable/blackkey"
+                    android:layout_toRightOf="@+id/space3"
+                    />
+
+                <Button
+                    android:layout_width="58dp"
+                    android:layout_height="140dp"
+                    android:id="@+id/blackkey7"
+                    android:background="@drawable/blackkey"
+                    android:layout_toRightOf="@+id/blackkey6"
+                    />
+
+                <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/key1"
-                        android:layout_weight="1"
-                        android:background="@drawable/key" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/key2"
-                        android:layout_weight="1"
-                        android:background="@drawable/key" />
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/key3"
-                        android:layout_weight="1"
-                        android:background="@drawable/key" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/key4"
-                        android:layout_weight="1"
-                        android:background="@drawable/key" />
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/key5"
-                        android:layout_weight="1"
-                        android:background="@drawable/key" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/key6"
-                        android:layout_weight="1"
-                        android:background="@drawable/key" />
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/key7"
-                        android:layout_weight="1"
-                        android:background="@drawable/key" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/key8"
-                        android:layout_weight="1"
-                        android:background="@drawable/key" />
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/key9"
-                        android:layout_weight="1"
-                        android:background="@drawable/key" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/key10"
-                        android:layout_weight="1"
-                        android:background="@drawable/key" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="200dp"
-                        android:layout_weight="1" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="140dp"
-                        android:id="@+id/blackkey1"
-                        android:layout_weight="2"
-                        android:background="@drawable/blackkey" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="140dp"
-                        android:id="@+id/blackkey2"
-                        android:layout_weight="2"
-                        android:background="@drawable/blackkey" />
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="200dp"
-                        android:layout_weight="2" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="140dp"
-                        android:id="@+id/blackkey3"
-                        android:layout_weight="2"
-                        android:background="@drawable/blackkey" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="140dp"
-                        android:id="@+id/blackkey4"
-                        android:layout_weight="2"
-                        android:background="@drawable/blackkey" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="140dp"
-                        android:id="@+id/blackkey5"
-                        android:layout_weight="2"
-                        android:background="@drawable/blackkey" />
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="200dp"
-                        android:layout_weight="2" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="140dp"
-                        android:id="@+id/blackkey6"
-                        android:layout_weight="2"
-                        android:background="@drawable/blackkey" />
-
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="140dp"
-                        android:id="@+id/blackkey7"
-                        android:layout_weight="2"
-                        android:background="@drawable/blackkey" />
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="200dp"
-                        android:layout_weight="1" />
-                </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:id="@+id/imageView2"
+                    android:background="#38b7ed"
+                    android:layout_toRightOf="@+id/key10"
+                    />
 
             </RelativeLayout>
 
@@ -354,4 +391,4 @@
     </RelativeLayout>
 
 </LinearLayout>
-<!-- From: file:/Users/troyspencer/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/layout/activity_main.xml -->
+<!-- From: file:/C:/Users/Troy/AndroidStudioProjects/GenesKeyboardDeluxe/Application/src/main/res/layout/activity_main.xml -->
