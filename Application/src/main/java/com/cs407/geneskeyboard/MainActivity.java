@@ -2,10 +2,18 @@ package com.cs407.geneskeyboard;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.res.AssetFileDescriptor;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.media.SoundPool;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -16,8 +24,11 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -27,6 +38,16 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    SoundPool keySoundPool;
+    HashMap<String, Integer> keySoundPoolMap;
+
+    SoundPool sampleSoundPool;
+    HashMap<String, Integer> sampleSoundPoolMap;
+
+    private MediaRecorder recorder = null;
+    private static String mFileName = null;
+    private static String mFileNameBase = null;
 
     private Map<String, String[]> presetMap;
     private List<String> presetList;
@@ -50,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         Button editSample = (Button) findViewById(R.id.edit);
         Button loadPreset = (Button) findViewById(R.id.load);
 
+        final TextView recordText = (TextView) findViewById(R.id.recordText);
+        keyPressSetup();
         samplePlayMode();
 
         loadPreset.setOnClickListener(new View.OnClickListener() {
@@ -75,9 +98,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
         recordSample.setOnClickListener(new View.OnClickListener() {
+            boolean mStartRecording = true;
             @Override
             public void onClick(View view) {
-                saveSampleName();
+                onRecord(mStartRecording);
+                if (mStartRecording) {
+                    recordText.setText("Recording...");
+                } else {
+                    recordText.setText("");
+                }
+                mStartRecording = !mStartRecording;
+
             }
         });
         editSample.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +129,413 @@ public class MainActivity extends AppCompatActivity {
         saveSampleList();
 
     }
-    
+
+    private void onRecord(boolean start) {
+        if (start) {
+            startRecording();
+        } else {
+            stopRecording();
+        }
+    }
+
+    public MainActivity(){
+        mFileNameBase = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName = mFileNameBase + "/temp.3gp";
+    }
+    private void startRecording() {
+
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        recorder.setOutputFile(mFileName);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            recorder.prepare();
+        } catch (IOException e) {
+            Log.e("record", "prepare() failed");
+        }
+
+        recorder.start();
+    }
+
+    private void stopRecording() {
+        recorder.stop();
+        recorder.release();
+        recorder = null;
+        saveSampleName();
+    }
+
+
+    private void keyPressSetup(){
+        //final MediaPlayer c4Sound = MediaPlayer.create(this, R.raw.c4piano);
+
+        keySoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 100);
+        keySoundPoolMap = new HashMap<String, Integer>();
+        keySoundPoolMap.put("C4", keySoundPool.load(this, R.raw.c4, 1));
+        keySoundPoolMap.put("C4sharp", keySoundPool.load(this, R.raw.c4sharp, 1));
+        keySoundPoolMap.put("D4", keySoundPool.load(this, R.raw.d4, 1));
+        keySoundPoolMap.put("D4sharp", keySoundPool.load(this, R.raw.d4sharp, 1));
+        keySoundPoolMap.put("E4", keySoundPool.load(this, R.raw.e4, 1));
+
+        keySoundPoolMap.put("F4", keySoundPool.load(this, R.raw.f4, 1));
+        keySoundPoolMap.put("F4sharp", keySoundPool.load(this, R.raw.f4sharp, 1));
+        keySoundPoolMap.put("G4", keySoundPool.load(this, R.raw.g4, 1));
+        keySoundPoolMap.put("G4sharp", keySoundPool.load(this, R.raw.g4sharp, 1));
+        keySoundPoolMap.put("A4", keySoundPool.load(this, R.raw.a4, 1));
+        keySoundPoolMap.put("A4sharp", keySoundPool.load(this, R.raw.a4sharp, 1));
+        keySoundPoolMap.put("B4", keySoundPool.load(this, R.raw.b4, 1));
+
+        keySoundPoolMap.put("C5", keySoundPool.load(this, R.raw.c5, 1));
+        keySoundPoolMap.put("C5sharp", keySoundPool.load(this, R.raw.c5sharp, 1));
+        keySoundPoolMap.put("D5", keySoundPool.load(this, R.raw.d5, 1));
+        keySoundPoolMap.put("D5sharp", keySoundPool.load(this, R.raw.d5sharp, 1));
+        keySoundPoolMap.put("E5", keySoundPool.load(this, R.raw.e5, 1));
+
+
+        final Button keyC4 = (Button)this.findViewById(R.id.key1);
+        final Button keyC4sharp = (Button)this.findViewById(R.id.blackkey1);
+        final Button keyD4 = (Button)this.findViewById(R.id.key2);
+        final Button keyD4sharp = (Button)this.findViewById(R.id.blackkey2);
+        final Button keyE4 = (Button)this.findViewById(R.id.key3);
+
+        final Button keyF4 = (Button)this.findViewById(R.id.key4);
+        final Button keyF4sharp = (Button)this.findViewById(R.id.blackkey3);
+        final Button keyG4 = (Button)this.findViewById(R.id.key5);
+        final Button keyG4sharp = (Button)this.findViewById(R.id.blackkey4);
+        final Button keyA4 = (Button)this.findViewById(R.id.key6);
+        final Button keyA4sharp = (Button)this.findViewById(R.id.blackkey5);
+
+        final Button keyB4 = (Button)this.findViewById(R.id.key7);
+        final Button keyC5 = (Button)this.findViewById(R.id.key8);
+        final Button keyC5sharp = (Button)this.findViewById(R.id.blackkey6);
+        final Button keyD5 = (Button)this.findViewById(R.id.key9);
+        final Button keyD5sharp = (Button)this.findViewById(R.id.blackkey7);
+        final Button keyE5 = (Button)this.findViewById(R.id.key10);
+
+        keyC4.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("C4");
+                        keyC4.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyC4.setBackgroundResource(R.drawable.key_unpressed);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyC4sharp.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("C4sharp");
+                        keyC4sharp.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyC4sharp.setBackgroundResource(R.drawable.blackkey);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyD4.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("D4");
+                        keyD4.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyD4.setBackgroundResource(R.drawable.key_unpressed);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyD4sharp.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("D4sharp");
+                        keyD4sharp.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyD4sharp.setBackgroundResource(R.drawable.blackkey);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyE4.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("E4");
+                        keyE4.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyE4.setBackgroundResource(R.drawable.key_unpressed);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+
+
+
+
+        keyF4.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("F4");
+                        keyF4.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyF4.setBackgroundResource(R.drawable.key_unpressed);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyF4sharp.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("F4sharp");
+                        keyF4sharp.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyF4sharp.setBackgroundResource(R.drawable.blackkey);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyG4.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("G4");
+                        keyG4.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyG4.setBackgroundResource(R.drawable.key_unpressed);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyG4sharp.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("G4sharp");
+                        keyG4sharp.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyG4sharp.setBackgroundResource(R.drawable.blackkey);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyA4.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("A4");
+                        keyA4.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyA4.setBackgroundResource(R.drawable.key_unpressed);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyA4sharp.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("A4sharp");
+                        keyA4sharp.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyA4sharp.setBackgroundResource(R.drawable.blackkey);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyB4.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("B4");
+                        keyB4.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyB4.setBackgroundResource(R.drawable.key_unpressed);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+
+
+
+
+
+        keyC5.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("C5");
+                        keyC5.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyC5.setBackgroundResource(R.drawable.key_unpressed);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyC5sharp.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("C5sharp");
+                        keyC5sharp.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyC5sharp.setBackgroundResource(R.drawable.blackkey);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyD5.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("D5");
+                        keyD5.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyD5.setBackgroundResource(R.drawable.key_unpressed);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyD5sharp.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("D5sharp");
+                        keyD5sharp.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyD5sharp.setBackgroundResource(R.drawable.blackkey);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        keyE5.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        playKeySound("E5");
+                        keyE5.setBackgroundResource(R.drawable.key_pressed);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        keyE5.setBackgroundResource(R.drawable.key_unpressed);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+
+    }
+    private void playKeySound(String sound){
+        AudioManager mgr = (AudioManager)this.getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+        float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
+        float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        float volume = streamVolumeCurrent / streamVolumeMax;
+
+        if(keySoundPool != null){
+            keySoundPool.play(keySoundPoolMap.get(sound), volume, volume, 1, 0, 1.0f);
+        }
+
+    }
+
+    private void playSampleSound(String sound){
+        AudioManager mgr = (AudioManager)this.getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+        float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
+        float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        float volume = streamVolumeCurrent / streamVolumeMax;
+
+        if(sampleSoundPool != null){
+            sampleSoundPool.play(sampleSoundPoolMap.get(sound), volume, volume, 1, 0, 1.0f);
+        }
+
+    }
     private void highLightSamples() {
 
         Button button11 = (Button) findViewById(R.id.button11);
@@ -163,100 +600,165 @@ public class MainActivity extends AppCompatActivity {
         final Button button24 = (Button) findViewById(R.id.button24);
         final Button button25 = (Button) findViewById(R.id.button25);
 
-        button11.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                unhighLightSamples();
-                sampleDialog(button11);
-                samplePlayMode();
-            }
-        });
-
-        button12.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                unhighLightSamples();
-                sampleDialog(button12);
-                samplePlayMode();
-            }
-        });
-        button13.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                unhighLightSamples();
-                sampleDialog(button13);
-                samplePlayMode();
-            }
-        });
-        button14.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                unhighLightSamples();
-                sampleDialog(button14);
-                samplePlayMode();
-            }
-        });
-        button15.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                unhighLightSamples();
-                sampleDialog(button15);
-                samplePlayMode();
+        button11.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        unhighLightSamples();
+                        sampleDialog(button11);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
 
             }
         });
-        button21.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                unhighLightSamples();
-                sampleDialog(button21);
-                samplePlayMode();
-
-            }
-        });
-        button22.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                unhighLightSamples();
-                sampleDialog(button22);
-                samplePlayMode();
+        button12.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        unhighLightSamples();
+                        sampleDialog(button12);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
 
             }
         });
-        button23.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                unhighLightSamples();
-                sampleDialog(button23);
-                samplePlayMode();
-
-            }
-        });
-        button24.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                unhighLightSamples();
-                sampleDialog(button24);
-                samplePlayMode();
+        button13.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        unhighLightSamples();
+                        sampleDialog(button13);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
 
             }
         });
-        button25.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        button14.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        unhighLightSamples();
+                        sampleDialog(button14);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
 
-                unhighLightSamples();
-                sampleDialog(button25);
-                samplePlayMode();
+            }
+        });
+        button15.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        unhighLightSamples();
+                        sampleDialog(button15);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        button21.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        unhighLightSamples();
+                        sampleDialog(button21);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        button22.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        unhighLightSamples();
+                        sampleDialog(button22);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        button23.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        unhighLightSamples();
+                        sampleDialog(button23);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        button24.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        unhighLightSamples();
+                        sampleDialog(button24);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        button25.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        unhighLightSamples();
+                        sampleDialog(button25);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
 
             }
         });
@@ -272,6 +774,7 @@ public class MainActivity extends AppCompatActivity {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.choose_sample_dialog);
         dialog.setTitle("Choose a preset...");
+        dialog.setCancelable(false);
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
 
         // IMMERSIVEMODE FIX
@@ -311,6 +814,7 @@ public class MainActivity extends AppCompatActivity {
                     putSampleArray(buttonArray);
 
                     dialog.dismiss();
+                    samplePlayMode();
 
                 }
 
@@ -364,6 +868,7 @@ public class MainActivity extends AppCompatActivity {
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.save_dialog);
+        dialog.setCancelable(false);
         dialog.setTitle("Save Preset As...");
 
         final EditText presetName = (EditText) dialog.findViewById(R.id.saveName);
@@ -509,7 +1014,7 @@ public class MainActivity extends AppCompatActivity {
         final Button button24 = (Button) findViewById(R.id.button24);
         final Button button25 = (Button) findViewById(R.id.button25);
 
-        String[] sampleArray = new String[12];
+        String[] sampleArray = new String[10];
 
         sampleArray[0] = button11.getText().toString();
         sampleArray[1] = button12.getText().toString();
@@ -533,6 +1038,7 @@ public class MainActivity extends AppCompatActivity {
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.save_dialog);
+        dialog.setCancelable(false);
         dialog.setTitle("Save Sample As...");
 
         final EditText sampleName = (EditText) dialog.findViewById(R.id.saveName);
@@ -581,6 +1087,11 @@ public class MainActivity extends AppCompatActivity {
                 }else {
                     sampleList.add(sampleName.getText().toString());
                 }
+                File file = new File(mFileName);
+                File newName = new File(mFileNameBase + "/" + sampleName.getText().toString() + ".3gp");
+                file.renameTo(newName);
+                Log.i("File location", mFileNameBase + "/" + sampleName.getText().toString() + ".3gp");
+                samplePlayMode();
                 dialog.dismiss();
             }
         });
@@ -612,7 +1123,8 @@ public class MainActivity extends AppCompatActivity {
 
         // custom dialog
         final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.choose_sample_dialog);
+        dialog.setContentView(R.layout.choose_sample_dialog_removal);
+        dialog.setCancelable(false);
         dialog.setTitle("Choose a sample...");
 
         final ListView sampleListView = (ListView) dialog.findViewById(R.id.sampleList);
@@ -641,11 +1153,22 @@ public class MainActivity extends AppCompatActivity {
                     // ListView Clicked item value
                     chosenSample.setText(sampleList.get(position));
                     dialog.dismiss();
+                    samplePlayMode();
 
                 }
 
             });
         }
+        Button removeButton = (Button) dialog.findViewById(R.id.removeButton);
+
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chosenSample.setText("");
+                dialog.dismiss();
+                samplePlayMode();
+            }
+        });
 
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
 
@@ -654,6 +1177,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                samplePlayMode();
             }
         });
 
@@ -691,6 +1215,7 @@ public class MainActivity extends AppCompatActivity {
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.choose_sample_dialog);
+        dialog.setCancelable(false);
         dialog.setTitle("Choose a sample...");
 
         final ListView sampleListView = (ListView) dialog.findViewById(R.id.sampleList);
@@ -715,8 +1240,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-
+                    sampleRemove(sampleList.get(position));
                     sampleList.remove(position);
+
                     dialog.dismiss();
 
                 }
@@ -746,6 +1272,32 @@ public class MainActivity extends AppCompatActivity {
         wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
     }
 
+    private void sampleRemove(String sample){
+        currSampleArray = getSampleArray();
+
+        for(int i = 0; i < currSampleArray.length; i++){
+            if(currSampleArray[i].equals(sample)){
+                currSampleArray[i] = "";
+                putSampleArray(currSampleArray);
+            }
+        }
+
+        for(Map.Entry<String, String[]> entry : presetMap.entrySet()){
+            boolean changed = false;
+            for(int i = 0; i < entry.getValue().length; i++){
+                if(entry.getValue()[i].equals(sample)){
+                    entry.getValue()[i] = "";
+                    changed = true;
+                }
+            }
+            if(changed){
+                presetMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        File sampleToRemove = new File(mFileNameBase + "/" + sample + ".3gp");
+        sampleToRemove.delete();
+    }
     private void saveSampleList() {
         FileOutputStream fileOutputStream;
         try {
@@ -772,84 +1324,211 @@ public class MainActivity extends AppCompatActivity {
         final Button button24 = (Button) findViewById(R.id.button24);
         final Button button25 = (Button) findViewById(R.id.button25);
 
-        final Context context = getApplicationContext();
-        button11.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context, button11.getText().toString(), Toast.LENGTH_SHORT).show();
+        currSampleArray = getSampleArray();
+
+        sampleSoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 100);
+        sampleSoundPoolMap = new HashMap<String, Integer>();
+        if(currSampleArray != null) {
+            for (int i = 0; i < currSampleArray.length; i++) {
+                Log.i("sample array", currSampleArray[i] + "");
+                if (!currSampleArray[i].equals("")) {
+                    sampleSoundPoolMap.put(currSampleArray[i], sampleSoundPool.load(mFileNameBase + "/" + currSampleArray[i] + ".3gp", 1));
+                }
+            }
+        }
+        button11.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        if(!button11.getText().toString().equals("")) {
+                            playSampleSound(button11.getText().toString());
+                        }
+                        button11.setBackgroundResource(R.drawable.highlighted_sample_button);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        button11.setBackgroundResource(R.drawable.samplebutton);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
             }
         });
 
-        button12.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Toast.makeText(context, button12.getText().toString(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
-        button13.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Toast.makeText(context, button13.getText().toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        button14.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Toast.makeText(context, button14.getText().toString(), Toast.LENGTH_SHORT).show();
+        button12.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        if(!button12.getText().toString().equals("")) {
+                            playSampleSound(button12.getText().toString());
+                        }
+                        button12.setBackgroundResource(R.drawable.highlighted_sample_button);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        button12.setBackgroundResource(R.drawable.samplebutton);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
 
             }
         });
-        button15.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Toast.makeText(context, button15.getText().toString(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
-        button21.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Toast.makeText(context, button21.getText().toString(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
-        button22.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-                Toast.makeText(context, button22.getText().toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        button23.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Toast.makeText(context, button23.getText().toString(), Toast.LENGTH_SHORT).show();
+        button13.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        if(!button13.getText().toString().equals("")) {
+                            playSampleSound(button13.getText().toString());
+                        }
+                        button13.setBackgroundResource(R.drawable.highlighted_sample_button);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        button13.setBackgroundResource(R.drawable.samplebutton);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
 
             }
         });
-        button24.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        button14.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        if(!button14.getText().toString().equals("")) {
+                            playSampleSound(button14.getText().toString());
+                        }
+                        button14.setBackgroundResource(R.drawable.highlighted_sample_button);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        button14.setBackgroundResource(R.drawable.samplebutton);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
 
-                Toast.makeText(context, button24.getText().toString(), Toast.LENGTH_SHORT).show();
             }
         });
-        button25.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Toast.makeText(context, button25.getText().toString(), Toast.LENGTH_SHORT).show();
+        button15.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        if(!button15.getText().toString().equals("")) {
+                            playSampleSound(button15.getText().toString());
+                        }
+                        button15.setBackgroundResource(R.drawable.highlighted_sample_button);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        button15.setBackgroundResource(R.drawable.samplebutton);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
 
             }
         });
+        button21.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        if(!button21.getText().toString().equals("")) {
+                            playSampleSound(button21.getText().toString());
+                        }
+                        button21.setBackgroundResource(R.drawable.highlighted_sample_button);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        button21.setBackgroundResource(R.drawable.samplebutton);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        button22.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        if(!button22.getText().toString().equals("")) {
+                            playSampleSound(button22.getText().toString());
+                        }
+                        button22.setBackgroundResource(R.drawable.highlighted_sample_button);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        button22.setBackgroundResource(R.drawable.samplebutton);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        button23.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        if(!button23.getText().toString().equals("")) {
+                            playSampleSound(button23.getText().toString());
+                        }
+                        button23.setBackgroundResource(R.drawable.highlighted_sample_button);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        button23.setBackgroundResource(R.drawable.samplebutton);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        button24.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        if(!button24.getText().toString().equals("")) {
+                            playSampleSound(button24.getText().toString());
+                        }
+                        button24.setBackgroundResource(R.drawable.highlighted_sample_button);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        button24.setBackgroundResource(R.drawable.samplebutton);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+        button25.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        if(!button25.getText().toString().equals("")) {
+                            playSampleSound(button25.getText().toString());
+                        }
+                        button25.setBackgroundResource(R.drawable.highlighted_sample_button);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        button25.setBackgroundResource(R.drawable.samplebutton);
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+
+            }
+        });
+
+
 
     }
 
@@ -889,6 +1568,7 @@ public class MainActivity extends AppCompatActivity {
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.overwrite_dialog);
+        dialog.setCancelable(false);
         dialog.setTitle("Overwrite preset?");
 
         final TextView overwriteName = (TextView) dialog.findViewById(R.id.overwriteName);
@@ -931,6 +1611,7 @@ public class MainActivity extends AppCompatActivity {
         // custom dialog
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.overwrite_dialog);
+        dialog.setCancelable(false);
         dialog.setTitle("Overwrite sample?");
 
         final TextView overwriteName = (TextView) dialog.findViewById(R.id.overwriteName);
@@ -1004,6 +1685,14 @@ public class MainActivity extends AppCompatActivity {
         updateSystemUiVisibility();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (recorder != null) {
+            recorder.release();
+            recorder = null;
+        }
+    }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);

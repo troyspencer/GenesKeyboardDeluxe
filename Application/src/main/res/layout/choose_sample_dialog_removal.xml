@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/image"
+        android:src="#38b7ed" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cancelButton"
+        android:text="Cancel"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/samplebutton"
+        android:textColor="#000000"
+        android:layout_margin="@dimen/margin_medium"
+        android:layout_alignParentTop="true"
+        android:layout_alignTop="@+id/image" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/removeButton"
+        android:text="Remove"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/samplebutton"
+        android:textColor="#000000"
+        android:layout_margin="@dimen/margin_medium"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/cancelButton" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sampleList"
+        android:layout_centerInParent="true"
+        android:layout_alignTop="@+id/image" />
+
+</RelativeLayout>

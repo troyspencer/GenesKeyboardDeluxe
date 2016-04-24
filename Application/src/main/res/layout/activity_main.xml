@@ -137,7 +137,7 @@
                     android:columnCount="2"
                     android:rowCount="2"
                     android:layout_toRightOf="@+id/myGrid"
-                    android:id="@+id/settlings"
+                    android:id="@+id/settings"
                     android:useDefaultMargins="true">
 
                     <Button
@@ -146,7 +146,7 @@
                         android:text="ASSIGN SAMPLE"
                         android:id="@+id/assign"
                         android:textSize="10dp"
-                        android:textColor="#000000"
+                        android:textColor="#ffffff"
                         android:background="@drawable/settingsbutton" />
 
                     <Button
@@ -155,7 +155,7 @@
                         android:text="EDIT SAMPLE"
                         android:id="@+id/edit"
                         android:textSize="10dp"
-                        android:textColor="#000000"
+                        android:textColor="#ffffff"
                         android:background="@drawable/settingsbutton" />
 
                     <Button
@@ -164,7 +164,7 @@
                         android:text="SAVE PRESET"
                         android:id="@+id/save"
                         android:textSize="10dp"
-                        android:textColor="#000000"
+                        android:textColor="#ffffff"
                         android:background="@drawable/settingsbutton" />
 
                     <Button
@@ -173,7 +173,7 @@
                         android:text="LOAD PRESET"
                         android:id="@+id/load"
                         android:textSize="10dp"
-                        android:textColor="#000000"
+                        android:textColor="#ffffff"
                         android:background="@drawable/settingsbutton" />
                 </GridLayout>
 
@@ -185,7 +185,18 @@
                     android:background="@drawable/recordbutton"
                     android:layout_alignParentRight="true"
                     android:layout_margin="10dp"
-                    android:textColor="#000000" />
+                    android:textColor="#ffffff" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/recordText"
+                    android:layout_below="@+id/recordButton"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="20dp"
+                    android:textSize="25dp"
+                    android:textColor="#000000"
+                    android:background="#fef434" />
 
             </RelativeLayout>
 
@@ -214,7 +225,7 @@
                     android:layout_width="58dp"
                     android:layout_height="match_parent"
                     android:id="@+id/key1"
-                    android:background="@drawable/key"
+                    android:background="@drawable/key_unpressed"
                     android:stateListAnimator="@null"
                     android:layout_toRightOf="@+id/leftBlue"
                      />
@@ -223,7 +234,7 @@
                     android:layout_width="58dp"
                     android:layout_height="match_parent"
                     android:id="@+id/key2"
-                    android:background="@drawable/key"
+                    android:background="@drawable/key_unpressed"
                     android:layout_toRightOf="@+id/key1"
                     android:stateListAnimator="@null"
                      />
@@ -232,7 +243,7 @@
                     android:layout_width="58dp"
                     android:layout_height="match_parent"
                     android:id="@+id/key3"
-                    android:background="@drawable/key"
+                    android:background="@drawable/key_unpressed"
                     android:layout_toRightOf="@+id/key2"
                     android:stateListAnimator="@null"
                      />
@@ -241,7 +252,7 @@
                     android:layout_width="58dp"
                     android:layout_height="match_parent"
                     android:id="@+id/key4"
-                    android:background="@drawable/key"
+                    android:background="@drawable/key_unpressed"
                     android:layout_toRightOf="@+id/key3"
                     android:stateListAnimator="@null"
                      />
@@ -250,7 +261,7 @@
                     android:layout_width="58dp"
                     android:layout_height="match_parent"
                     android:id="@+id/key5"
-                    android:background="@drawable/key"
+                    android:background="@drawable/key_unpressed"
                     android:layout_toRightOf="@+id/key4"
                     android:stateListAnimator="@null"
                      />
@@ -259,7 +270,7 @@
                     android:layout_width="58dp"
                     android:layout_height="match_parent"
                     android:id="@+id/key6"
-                    android:background="@drawable/key"
+                    android:background="@drawable/key_unpressed"
                     android:layout_toRightOf="@+id/key5"
                     android:stateListAnimator="@null"
                      />
@@ -268,7 +279,7 @@
                     android:layout_width="58dp"
                     android:layout_height="match_parent"
                     android:id="@+id/key7"
-                    android:background="@drawable/key"
+                    android:background="@drawable/key_unpressed"
                     android:layout_toRightOf="@+id/key6"
                     android:stateListAnimator="@null"
                      />
@@ -277,7 +288,7 @@
                     android:layout_width="58dp"
                     android:layout_height="match_parent"
                     android:id="@+id/key8"
-                    android:background="@drawable/key"
+                    android:background="@drawable/key_unpressed"
                     android:layout_toRightOf="@+id/key7"
                     android:stateListAnimator="@null"
                      />
@@ -286,7 +297,7 @@
                     android:layout_width="58dp"
                     android:layout_height="match_parent"
                     android:id="@+id/key9"
-                    android:background="@drawable/key"
+                    android:background="@drawable/key_unpressed"
                     android:layout_toRightOf="@+id/key8"
                     android:stateListAnimator="@null"
                      />
@@ -295,7 +306,7 @@
                     android:layout_width="58dp"
                     android:layout_height="match_parent"
                     android:id="@+id/key10"
-                    android:background="@drawable/key"
+                    android:background="@drawable/key_unpressed"
                     android:layout_toRightOf="@+id/key9"
                     android:stateListAnimator="@null"
                      />

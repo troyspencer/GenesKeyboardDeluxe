@@ -24,8 +24,8 @@
     <item android:state_focused="true" >
         <shape>
             <gradient
-                android:endColor="#ffffff"
-                android:startColor="#e0e0e0"
+                android:endColor="#ffff02"
+                android:startColor="#ff9f04"
                 android:angle="270" />
             <stroke
                 android:width="3dp"

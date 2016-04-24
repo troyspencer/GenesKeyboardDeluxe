@@ -147,7 +147,7 @@
                     android:columnCount="2"
                     android:rowCount="2"
                     android:layout_toRightOf="@+id/myGrid"
-                    android:id="@+id/settlings"
+                    android:id="@+id/settings"
                     android:useDefaultMargins="true"
                     android:layout_marginLeft="30dp">
 
@@ -157,7 +157,7 @@
                         android:text="ASSIGN SAMPLE"
                         android:id="@+id/assign"
                         android:textSize="14dp"
-                        android:textColor="#000000"
+                        android:textColor="#ffffff"
                         android:background="@drawable/settingsbutton" />
 
                     <Button
@@ -166,7 +166,7 @@
                         android:text="EDIT SAMPLE"
                         android:id="@+id/edit"
                         android:textSize="14dp"
-                        android:textColor="#000000"
+                        android:textColor="#ffffff"
                         android:background="@drawable/settingsbutton" />
 
                     <Button
@@ -175,7 +175,7 @@
                         android:text="SAVE PRESET"
                         android:id="@+id/save"
                         android:textSize="14dp"
-                        android:textColor="#000000"
+                        android:textColor="#ffffff"
                         android:background="@drawable/settingsbutton" />
 
                     <Button
@@ -184,7 +184,7 @@
                         android:text="LOAD PRESET"
                         android:id="@+id/load"
                         android:textSize="14dp"
-                        android:textColor="#000000"
+                        android:textColor="#ffffff"
                         android:background="@drawable/settingsbutton" />
                 </GridLayout>
 
@@ -196,7 +196,18 @@
                     android:background="@drawable/recordbutton"
                     android:layout_alignParentRight="true"
                     android:layout_margin="20dp"
-                    android:textColor="#000000" />
+                    android:textColor="#ffffff"
+                    android:textSize="27dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/recordText"
+                    android:layout_below="@+id/recordButton"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="20dp"
+                    android:textSize="25dp"
+                    android:textColor="#000000"
+                    android:background="#fef434" />
 
             </RelativeLayout>
 
