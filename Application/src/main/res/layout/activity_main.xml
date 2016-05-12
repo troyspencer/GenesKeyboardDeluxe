@@ -38,7 +38,8 @@
                         android:contextClickable="false"
                         android:textColor="#000000"
                         android:textSize="10dp"
-                        android:background="@drawable/samplebutton" />
+                        android:background="@drawable/samplebutton"
+                        android:layout_gravity="top" />
 
                     <Button
                         android:layout_width="64dp"
@@ -48,7 +49,8 @@
                         android:contextClickable="false"
                         android:textColor="#000000"
                         android:textSize="10dp"
-                        android:background="@drawable/samplebutton" />
+                        android:background="@drawable/samplebutton"
+                        android:layout_gravity="top" />
 
                     <Button
                         android:layout_width="64dp"
@@ -58,7 +60,8 @@
                         android:contextClickable="false"
                         android:textColor="#000000"
                         android:textSize="10dp"
-                        android:background="@drawable/samplebutton" />
+                        android:background="@drawable/samplebutton"
+                        android:layout_gravity="top" />
 
                     <Button
                         android:layout_width="64dp"
@@ -68,7 +71,8 @@
                         android:contextClickable="false"
                         android:textColor="#000000"
                         android:textSize="10dp"
-                        android:background="@drawable/samplebutton" />
+                        android:background="@drawable/samplebutton"
+                        android:layout_gravity="top" />
 
                     <Button
                         android:layout_width="64dp"
@@ -78,7 +82,8 @@
                         android:contextClickable="false"
                         android:textColor="#000000"
                         android:textSize="10dp"
-                        android:background="@drawable/samplebutton" />
+                        android:background="@drawable/samplebutton"
+                        android:layout_gravity="top" />
 
                     <Button
                         android:layout_width="64dp"
@@ -88,7 +93,8 @@
                         android:contextClickable="false"
                         android:textColor="#000000"
                         android:textSize="10dp"
-                        android:background="@drawable/samplebutton" />
+                        android:background="@drawable/samplebutton"
+                        android:layout_gravity="top" />
 
                     <Button
                         android:layout_width="64dp"
@@ -98,7 +104,8 @@
                         android:contextClickable="false"
                         android:textColor="#000000"
                         android:textSize="10dp"
-                        android:background="@drawable/samplebutton" />
+                        android:background="@drawable/samplebutton"
+                        android:layout_gravity="top" />
 
                     <Button
                         android:layout_width="64dp"
@@ -108,7 +115,8 @@
                         android:contextClickable="false"
                         android:textColor="#000000"
                         android:textSize="10dp"
-                        android:background="@drawable/samplebutton" />
+                        android:background="@drawable/samplebutton"
+                        android:layout_gravity="top" />
 
                     <Button
                         android:layout_width="64dp"
@@ -118,7 +126,8 @@
                         android:contextClickable="false"
                         android:textColor="#000000"
                         android:textSize="10dp"
-                        android:background="@drawable/samplebutton" />
+                        android:background="@drawable/samplebutton"
+                        android:layout_gravity="top" />
 
                     <Button
                         android:layout_width="64dp"
@@ -128,7 +137,8 @@
                         android:contextClickable="false"
                         android:textColor="#000000"
                         android:textSize="10dp"
-                        android:background="@drawable/samplebutton" />
+                        android:background="@drawable/samplebutton"
+                        android:layout_gravity="top" />
                 </GridLayout>
 
                 <GridLayout
@@ -152,7 +162,7 @@
                     <Button
                         android:layout_width="70dp"
                         android:layout_height="wrap_content"
-                        android:text="EDIT SAMPLE"
+                        android:text="DELETE SAMPLE"
                         android:id="@+id/edit"
                         android:textSize="10dp"
                         android:textColor="#ffffff"
@@ -176,6 +186,58 @@
                         android:textColor="#ffffff"
                         android:background="@drawable/settingsbutton" />
                 </GridLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/modeblock"
+                    android:layout_below="@+id/recordButton"
+                    android:layout_toRightOf="@+id/settings">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MODE"
+                        android:id="@+id/mode"
+                        android:textColor="#ffffff"
+                        android:layout_gravity="center_horizontal" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_toRightOf="@+id/settings"
+                        android:layout_below="@+id/recordButton"
+                        android:id="@+id/modes">
+
+                        <Button
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:text="piano"
+                            android:id="@+id/pianoButton"
+                            android:layout_toLeftOf="@+id/synthButton"
+                            android:layout_below="@+id/recordButton"
+                            android:textStyle="bold"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:textSize="9dp" />
+
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:text="Synth"
+                            android:id="@+id/synthButton"
+                            android:layout_below="@+id/recordButton"
+                            android:layout_alignParentRight="true"
+                            android:textStyle="bold"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:textSize="9dp"
+                            android:textColor="#000000" />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <Button
                     android:layout_width="50dp"

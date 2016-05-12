@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/removeButton"
-        android:text="Remove"
+        android:text="Unassign"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="false"
         android:layout_alignParentRight="true"

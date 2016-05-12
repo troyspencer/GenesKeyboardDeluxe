@@ -12,7 +12,7 @@
         jar="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
         jumboMode="true"
         revision="23.0.2"
-        sha1="6530279c8716a97d187080ce303919bdbfbb9ef7">
+        sha1="e3fa544926233e90a6998f12bd725588ef4e6ab8">
         <dex dex="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_8be9f410ed3d1417def0a5e2ed36487d310b6d13\classes.dex" />
     </item>
     <item
@@ -47,7 +47,7 @@
         jar="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
         jumboMode="true"
         revision="23.0.2"
-        sha1="4604277cb80543ecb7ad2c14e1572b380a3a5fc0">
+        sha1="cbeec83b5e935b4be39b7e2b25360955993932bc">
         <dex dex="C:\Users\Troy\AndroidStudioProjects\GenesKeyboardDeluxe\Application\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_b0c7e406a70caa47e6a59b2c642d3111ff9e40ac\classes.dex" />
     </item>
     <item
