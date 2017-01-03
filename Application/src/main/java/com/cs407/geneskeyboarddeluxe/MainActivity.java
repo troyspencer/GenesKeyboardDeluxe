@@ -10,6 +10,7 @@ import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.media.SoundPool;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -27,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,6 +62,27 @@ public class MainActivity extends AppCompatActivity {
 
     class Permissions {
 
+        boolean hasPermissions(Context context, String... permissions) {
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+                for (String permission : permissions) {
+                    if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        void checkAndRequestPermissions(){
+            int PERMISSION_ALL = 1;
+            String[] PERMISSIONS = {Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+            if(!hasPermissions(MainActivity.this, PERMISSIONS)){
+                ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, PERMISSION_ALL);
+
+            }
+        }
+
         private void requestAudioRecording() {
             int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 101;
 
@@ -79,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         private void requestFileSaving() {
-            int MY_PERMISSIONS_REQUEST_SAVE_FILES = 101;
+            int MY_PERMISSIONS_REQUEST_SAVE_FILES = 102;
 
             String TAG = "FileSave";
 
@@ -1184,6 +1207,9 @@ public class MainActivity extends AppCompatActivity {
                 fileInputStream = openFileInput("presetMap");
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
                 presetMap = (HashMap<String, String[]>) objectInputStream.readObject();
+                if(presetMap == null){
+                    presetMap = new HashMap<String, String[]>();
+                }
                 objectInputStream.close();
                 return presetMap;
             } catch (Exception e) {
@@ -1328,6 +1354,9 @@ public class MainActivity extends AppCompatActivity {
                 fileInputStream = openFileInput("presetList");
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
                 presetList = (List<String>) objectInputStream.readObject();
+                if(presetList == null){
+                    presetList = new ArrayList<String>();
+                }
                 objectInputStream.close();
                 return presetList;
             } catch (Exception e) {
@@ -2378,7 +2407,6 @@ public class MainActivity extends AppCompatActivity {
 
         private void startRecording() {
 
-
             recorder = new MediaRecorder();
             recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -2448,12 +2476,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     void init() {
-        Permissions permissions = new Permissions();
         Preset preset = new Preset();
         Samples samples = new Samples();
 
-        permissions.requestFileSaving();
-        permissions.requestAudioRecording();
         preset.getPresetMap();
         preset.getPresetList();
         samples.getSampleList();
@@ -2539,27 +2564,56 @@ public class MainActivity extends AppCompatActivity {
 
         new Samples().samplePlayMode();
 
+
         loadPreset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                new Preset().loadPreset();
+                Permissions permissions = new Permissions();
+
+                int PERMISSION_ALL = 1;
+                String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+                if(!permissions.hasPermissions(MainActivity.this, PERMISSIONS)) {
+                    ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, PERMISSION_ALL);
+                }else {
+                    new Preset().loadPreset();
+                }
             }
         });
 
         savePreset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Preset().savePreset();
+                Permissions permissions = new Permissions();
+
+                int PERMISSION_ALL = 1;
+                String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+                if(!permissions.hasPermissions(MainActivity.this, PERMISSIONS)) {
+                    ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, PERMISSION_ALL);
+                }else {
+                    new Preset().savePreset();
+                }
             }
         });
 
         assignSample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Samples samples = new Samples();
-                samples.highLightSamples();
-                samples.selectSample();
+                Permissions permissions = new Permissions();
+
+                int PERMISSION_ALL = 1;
+                String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+                if(!permissions.hasPermissions(MainActivity.this, PERMISSIONS)) {
+                    ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, PERMISSION_ALL);
+                }else{
+                    Samples samples = new Samples();
+                    samples.highLightSamples();
+                    samples.selectSample();
+                }
+
             }
         });
 
@@ -2568,23 +2622,44 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                new Record().onRecord(mStartRecording);
 
-                if (mStartRecording) {
-                    recordText.setText("");
-                    recordSample.setBackgroundResource(R.drawable.recordingbutton);
-                } else {
-                    recordText.setText("");
-                    recordSample.setBackgroundResource(R.drawable.recordbutton);
+                Permissions permissions = new Permissions();
+
+                int PERMISSION_ALL = 1;
+                String[] PERMISSIONS = {Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+                if(!permissions.hasPermissions(MainActivity.this, PERMISSIONS)) {
+                    ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, PERMISSION_ALL);
+                }else{
+
+                    new Record().onRecord(mStartRecording);
+
+                    if (mStartRecording) {
+                        recordText.setText("");
+                        recordSample.setBackgroundResource(R.drawable.recordingbutton);
+                    } else {
+                        recordText.setText("");
+                        recordSample.setBackgroundResource(R.drawable.recordbutton);
+                    }
+                    mStartRecording = !mStartRecording;
                 }
-                mStartRecording = !mStartRecording;
+
 
             }
         });
         editSample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Samples().viewSampleList();
+                Permissions permissions = new Permissions();
+
+                int PERMISSION_ALL = 1;
+                String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+                if(!permissions.hasPermissions(MainActivity.this, PERMISSIONS)) {
+                    ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, PERMISSION_ALL);
+                }else {
+                    new Samples().viewSampleList();
+                }
             }
         });
     }
