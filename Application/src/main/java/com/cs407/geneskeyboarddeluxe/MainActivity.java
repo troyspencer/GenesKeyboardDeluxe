@@ -1,14 +1,18 @@
 package com.cs407.geneskeyboarddeluxe;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Context;
@@ -61,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        requestAudioRecording();
+        requestFileSaving();
 
         getPresetMap();
         getPresetList();
@@ -232,7 +239,45 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void requestAudioRecording() {
+        int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 101;
+
+        String TAG = "yo";
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            Log.i(TAG, "Permission to record denied");
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECORD_AUDIO},
+                    MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
+        }
+    }
+
+
+    private void requestFileSaving() {
+        int MY_PERMISSIONS_REQUEST_SAVE_FILES = 101;
+
+        String TAG = "FileSave";
+
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            Log.i(TAG, "Permission to filesave denied");
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_SAVE_FILES);
+        }
+    }
+
+
     public MainActivity(){
+
         mFileNameBase = Environment.getExternalStorageDirectory().getAbsolutePath();
         File dir = new File(mFileNameBase + "/geneskeyboardsamples");
         if(!dir.exists()){
@@ -1642,6 +1687,9 @@ public class MainActivity extends AppCompatActivity {
             fileInputStream = openFileInput("presetList");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             presetList = (List<String>) objectInputStream.readObject();
+            if(presetList == null){
+                presetList = new ArrayList<String>();
+            }
             objectInputStream.close();
             return presetList;
         } catch (Exception e) {
@@ -2345,6 +2393,9 @@ public class MainActivity extends AppCompatActivity {
             fileInputStream = openFileInput("presetMap");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             presetMap = (HashMap<String, String[]>) objectInputStream.readObject();
+            if (presetMap == null){
+                presetMap = new HashMap<String, String[]>();
+            }
             objectInputStream.close();
             return presetMap;
         } catch (Exception e) {
