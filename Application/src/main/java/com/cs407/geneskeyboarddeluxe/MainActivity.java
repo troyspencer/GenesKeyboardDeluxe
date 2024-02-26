@@ -3,17 +3,23 @@ package com.cs407.geneskeyboarddeluxe;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.ContentUris;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.media.SoundPool;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.provider.MediaStore;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -42,7 +48,10 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
 
+    public static Context context;
     public static final String modeFile = "Mode";
+
+    boolean permissionToRecord = false;
 
     SoundPool keySoundPool;
     HashMap<String, Integer> keySoundPoolMap;
@@ -65,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = getApplicationContext();
 
         requestAudioRecording();
         requestFileSaving();
@@ -285,7 +295,31 @@ public class MainActivity extends AppCompatActivity {
         }
         mFileName = mFileNameBase + "/geneskeyboardsamples/temp.3gp";
     }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            permissionToRecord = resultCode == RESULT_OK;
+        }
+    }
+
+    public static boolean isMicrophoneAvailable() {
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        return audioManager.getMode() == AudioManager.MODE_NORMAL;
+    }
     private void startRecording() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            Uri uriToModify = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+            Uri Uri_one = ContentUris.withAppendedId( MediaStore.Audio.Media.getContentUri("external"),1);
+            List<Uri> uris = new ArrayList<>();
+            uris.add((Uri_one));
+            PendingIntent editPendingIntent = MediaStore.createWriteRequest(context.getContentResolver(), uris);
+            try {
+                startIntentSenderForResult(editPendingIntent.getIntentSender(), 1, null, 0, 0, 0);
+            } catch (IntentSender.SendIntentException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -293,22 +327,52 @@ public class MainActivity extends AppCompatActivity {
         recorder.setOutputFile(mFileName);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
+        boolean prepared = false;
         try {
             recorder.prepare();
+            prepared = true;
         } catch (IOException e) {
             Log.e("record", "prepare() failed");
+        }
+
+        if (!prepared || !permissionToRecord || !isMicrophoneAvailable()) {
+            return;
         }
 
         recorder.start();
     }
 
     private void stopRecording() {
+        if (recorder == null) {
+            return;
+        }
         recorder.stop();
         recorder.release();
         recorder = null;
         saveSampleName();
     }
 
+//    public boolean onTouchWhiteKey(View v, MotionEvent event) {
+//        return onTouchKey(v, event, R.drawable.key_unpressed);
+//    }
+//
+//    public boolean onTouchBlackKey(View v, MotionEvent event) {
+//        return onTouchKey(v, event, R.drawable.blackkey);
+//    }
+
+    public boolean onTouchKey(View v, MotionEvent event, Button button, boolean isWhite) {
+        switch(event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // PRESSED
+                button.setBackgroundResource(R.drawable.key_pressed);
+                return true;
+            case MotionEvent.ACTION_UP:
+                // RELEASED
+                button.setBackgroundResource(isWhite ? R.drawable.key_unpressed : R.drawable.blackkey);
+                return true; // if you want to handle the touch event
+        }
+        return false;
+    }
 
     private void disableKeys(){
         final Button keyC4 = (Button)this.findViewById(R.id.key1);
@@ -331,279 +395,23 @@ public class MainActivity extends AppCompatActivity {
         final Button keyD5sharp = (Button)this.findViewById(R.id.blackkey7);
         final Button keyE5 = (Button)this.findViewById(R.id.key10);
 
-        keyC4.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyC4.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyC4.setBackgroundResource(R.drawable.key_unpressed);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-
-        keyC4sharp.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyC4sharp.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyC4sharp.setBackgroundResource(R.drawable.blackkey);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyD4.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyD4.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyD4.setBackgroundResource(R.drawable.key_unpressed);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyD4sharp.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyD4sharp.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyD4sharp.setBackgroundResource(R.drawable.blackkey);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyE4.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyE4.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyE4.setBackgroundResource(R.drawable.key_unpressed);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyF4.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyF4.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyF4.setBackgroundResource(R.drawable.key_unpressed);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyF4sharp.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyF4sharp.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyF4sharp.setBackgroundResource(R.drawable.blackkey);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyG4.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyG4.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyG4.setBackgroundResource(R.drawable.key_unpressed);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyG4sharp.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyG4sharp.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyG4sharp.setBackgroundResource(R.drawable.blackkey);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyA4.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyA4.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyA4.setBackgroundResource(R.drawable.key_unpressed);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyA4sharp.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyA4sharp.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyA4sharp.setBackgroundResource(R.drawable.blackkey);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyB4.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyB4.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyB4.setBackgroundResource(R.drawable.key_unpressed);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyC5.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyC5.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyC5.setBackgroundResource(R.drawable.key_unpressed);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyC5sharp.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyC5sharp.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyC5sharp.setBackgroundResource(R.drawable.blackkey);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyD5.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyD5.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyD5.setBackgroundResource(R.drawable.key_unpressed);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyD5sharp.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyD5sharp.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyD5sharp.setBackgroundResource(R.drawable.blackkey);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
-        keyE5.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        keyE5.setBackgroundResource(R.drawable.key_pressed);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        keyE5.setBackgroundResource(R.drawable.key_unpressed);
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-
-            }
-        });
+        keyC4.setOnTouchListener((v, event) -> onTouchKey(v, event, keyC4, true));
+        keyC4sharp.setOnTouchListener((v, event) -> onTouchKey(v, event, keyC4sharp, true));
+        keyD4.setOnTouchListener((v, event) -> onTouchKey(v, event, keyD4, true));
+        keyD4sharp.setOnTouchListener((v, event) -> onTouchKey(v, event, keyD4sharp, false));
+        keyE4.setOnTouchListener((v, event) -> onTouchKey(v, event, keyE4, true));
+        keyF4.setOnTouchListener((v, event) -> onTouchKey(v, event, keyF4sharp, true));
+        keyF4sharp.setOnTouchListener((v, event) -> onTouchKey(v, event, keyF4sharp, false));
+        keyG4.setOnTouchListener((v, event) -> onTouchKey(v, event, keyG4, true));
+        keyG4sharp.setOnTouchListener((v, event) -> onTouchKey(v, event, keyG4sharp, false));
+        keyA4.setOnTouchListener((v, event) -> onTouchKey(v, event, keyA4, true));
+        keyA4sharp.setOnTouchListener((v, event) -> onTouchKey(v, event, keyA4sharp, false));
+        keyB4.setOnTouchListener((v, event) -> onTouchKey(v, event, keyB4, true));
+        keyC5.setOnTouchListener((v, event) -> onTouchKey(v, event, keyC5, true));
+        keyC5sharp.setOnTouchListener((v, event) -> onTouchKey(v, event, keyC5sharp, false));
+        keyD5.setOnTouchListener((v, event) -> onTouchKey(v, event, keyD5, true));
+        keyD5sharp.setOnTouchListener((v, event) -> onTouchKey(v, event, keyD5sharp, false));
+        keyE5.setOnTouchListener((v, event) -> onTouchKey(v, event, keyE5, true));
     }
     private void synthLoad(){
         keyStreamMap = new HashMap<String, Integer>();

@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Application/Application.iml" filepath="$PROJECT_DIR$/Application/Application.iml" />
-      <module fileurl="file://$PROJECT_DIR$/GenesKeyboardDeluxe.iml" filepath="$PROJECT_DIR$/GenesKeyboardDeluxe.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AndroidStudio.iml" filepath="$PROJECT_DIR$/.idea/modules/AndroidStudio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Application/AndroidStudio.Application.iml" filepath="$PROJECT_DIR$/.idea/modules/Application/AndroidStudio.Application.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Application/AndroidStudio.Application.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/Application/AndroidStudio.Application.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Application/AndroidStudio.Application.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Application/AndroidStudio.Application.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Application/AndroidStudio.Application.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/Application/AndroidStudio.Application.unitTest.iml" />
     </modules>
   </component>
 </project>
