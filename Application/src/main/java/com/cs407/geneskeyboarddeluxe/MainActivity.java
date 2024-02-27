@@ -33,6 +33,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static Context context;
     public static final String modeFile = "Mode";
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
 
     boolean permissionToRecord = false;
 
@@ -76,8 +80,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
 
-        requestAudioRecording();
-        requestFileSaving();
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO)
+                == PackageManager.PERMISSION_GRANTED) {
+            permissionToRecord = true;
+        }
+
+        mFileNameBase = getExternalFilesDir(Environment.DIRECTORY_MUSIC).getAbsolutePath();
+        mFileName = mFileNameBase + "/temp.3gp";
 
         getPresetMap();
         getPresetList();
@@ -183,6 +193,10 @@ public class MainActivity extends AppCompatActivity {
             boolean mStartRecording = true;
             @Override
             public void onClick(View view) {
+                if (!permissionToRecord) {
+                    requestAudioRecording();
+                    return;
+                }
                 onRecord(mStartRecording);
 
                 if (mStartRecording) {
@@ -196,6 +210,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
         editSample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -250,57 +266,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestAudioRecording() {
-        int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 101;
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.RECORD_AUDIO},
+                REQUEST_RECORD_AUDIO_PERMISSION
+        );
 
-        String TAG = "yo";
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            Log.i(TAG, "Permission to record denied");
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.RECORD_AUDIO},
-                    MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
-        }
     }
 
-
-    private void requestFileSaving() {
-        int MY_PERMISSIONS_REQUEST_SAVE_FILES = 101;
-
-        String TAG = "FileSave";
-
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            Log.i(TAG, "Permission to filesave denied");
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_SAVE_FILES);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                permissionToRecord  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                if (!permissionToRecord) {
+                    Toast.makeText(context, "Recording requires Microphone.\nPlease grant permission in app settings.", Toast.LENGTH_LONG).show();
+                }
+                break;
         }
     }
-
 
     public MainActivity(){
-
-        mFileNameBase = Environment.getExternalStorageDirectory().getAbsolutePath();
-        File dir = new File(mFileNameBase + "/geneskeyboardsamples");
-        if(!dir.exists()){
-            dir.mkdirs();
-        }
-        mFileName = mFileNameBase + "/geneskeyboardsamples/temp.3gp";
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            permissionToRecord = resultCode == RESULT_OK;
-        }
     }
 
     public static boolean isMicrophoneAvailable() {
@@ -308,19 +294,9 @@ public class MainActivity extends AppCompatActivity {
         return audioManager.getMode() == AudioManager.MODE_NORMAL;
     }
     private void startRecording() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            Uri uriToModify = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-            Uri Uri_one = ContentUris.withAppendedId( MediaStore.Audio.Media.getContentUri("external"),1);
-            List<Uri> uris = new ArrayList<>();
-            uris.add((Uri_one));
-            PendingIntent editPendingIntent = MediaStore.createWriteRequest(context.getContentResolver(), uris);
-            try {
-                startIntentSenderForResult(editPendingIntent.getIntentSender(), 1, null, 0, 0, 0);
-            } catch (IntentSender.SendIntentException e) {
-                throw new RuntimeException(e);
-            }
+        if (!permissionToRecord) {
+            return;
         }
-
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -333,10 +309,6 @@ public class MainActivity extends AppCompatActivity {
             prepared = true;
         } catch (IOException e) {
             Log.e("record", "prepare() failed");
-        }
-
-        if (!prepared || !permissionToRecord || !isMicrophoneAvailable()) {
-            return;
         }
 
         recorder.start();
@@ -1749,9 +1721,9 @@ public class MainActivity extends AppCompatActivity {
                     sampleList.add(sampleName.getText().toString());
                 }
                 File file = new File(mFileName);
-                File newName = new File(mFileNameBase + "/geneskeyboardsamples/" + sampleName.getText().toString() + ".3gp");
+                File newName = new File(mFileNameBase + "/" + sampleName.getText().toString() + ".3gp");
                 file.renameTo(newName);
-                Log.i("File location", mFileNameBase + "/geneskeyboardsamples/" + sampleName.getText().toString() + ".3gp");
+                Log.i("File location", mFileNameBase + "/" + sampleName.getText().toString() + ".3gp");
                 samplePlayMode();
                 dialog.dismiss();
             }
@@ -1957,7 +1929,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        File sampleToRemove = new File(mFileNameBase + "/geneskeyboardsamples/" + sample + ".3gp");
+        File sampleToRemove = new File(mFileNameBase + "/" + sample + ".3gp");
         sampleToRemove.delete();
     }
     private void saveSampleList() {
@@ -1994,7 +1966,7 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < currSampleArray.length; i++) {
                 Log.i("sample array", currSampleArray[i] + "");
                 if (!currSampleArray[i].equals("")) {
-                    sampleSoundPoolMap.put(currSampleArray[i], sampleSoundPool.load(mFileNameBase + "/geneskeyboardsamples/" + currSampleArray[i] + ".3gp", 1));
+                    sampleSoundPoolMap.put(currSampleArray[i], sampleSoundPool.load(mFileNameBase + "/" + currSampleArray[i] + ".3gp", 1));
                 }
             }
         }
